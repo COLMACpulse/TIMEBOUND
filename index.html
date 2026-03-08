@@ -27,7 +27,6 @@
     --watch-bg:#111;
     --progress:0%;
     --zone:#2f8fff;
-    --marker-glow:rgba(255,255,255,.7);
   }
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -63,7 +62,7 @@
   }
 
   .shell{
-    width:min(100%, 960px);
+    width:min(100%, 980px);
     min-height:calc(100vh - (24px + var(--safe-top) + var(--safe-bottom)));
     min-height:calc(100dvh - (24px + var(--safe-top) + var(--safe-bottom)));
     display:flex;
@@ -94,7 +93,7 @@
   .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative}
   .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
   .title{font-size:clamp(28px, 6vw, 40px);font-weight:900;letter-spacing:.08em;margin:4px 0}
-  .subtitle{margin:0;color:#d0d7e3;font-size:13px;line-height:1.35;max-width:36ch}
+  .subtitle{margin:0;color:#d0d7e3;font-size:13px;line-height:1.35;max-width:42ch}
   .seal{
     min-width:68px;height:68px;border-radius:18px;display:grid;place-items:center;
     border:1px solid rgba(255,255,255,.1);
@@ -107,8 +106,8 @@
   .section-title{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin:0 0 12px}
 
   .preset-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-  .preset,.severity-btn,.resolve-btn,.btn{transition:.18s transform,.18s border-color,.18s background,.18s box-shadow}
-  .preset:active,.severity-btn:active,.resolve-btn:active,.btn:active{transform:scale(.987)}
+  .preset,.severity-btn,.resolve-btn,.btn,.media-btn{transition:.18s transform,.18s border-color,.18s background,.18s box-shadow}
+  .preset:active,.severity-btn:active,.resolve-btn:active,.btn:active,.media-btn:active{transform:scale(.987)}
   .preset{
     border:1px solid var(--line);
     color:var(--ink);
@@ -154,6 +153,53 @@
   .severity-btn .lab{font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
   .severity-btn.selected{border-color:rgba(255,255,255,.25);background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
 
+  .media-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;align-items:stretch}
+  .media-well{
+    position:relative;min-height:188px;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)),
+      radial-gradient(100% 100% at 50% 0%, rgba(154,124,255,.12), transparent 55%),
+      #0b0f16;
+  }
+  .media-well.empty::before{
+    content:"REMINDER IMAGE";position:absolute;inset:auto 16px 16px 16px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.48);z-index:2;
+  }
+  .media-preview{
+    width:100%;height:100%;object-fit:cover;display:none;
+    filter:saturate(.92) contrast(1.02) brightness(.84);
+  }
+  .media-overlay{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, rgba(4,6,10,.08) 0%, rgba(4,6,10,.18) 38%, rgba(4,6,10,.58) 100%),
+      radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.08), transparent 44%);
+    pointer-events:none;
+  }
+  .media-info{
+    display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+    min-width:0;
+  }
+  .media-stack{display:grid;gap:10px}
+  .media-btn{
+    min-height:56px;border:none;border-radius:18px;color:#fff;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 24px rgba(0,0,0,.18);
+  }
+  .media-btn.primary{
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)),
+      linear-gradient(90deg, rgba(47,143,255,.28), rgba(154,124,255,.24), rgba(247,204,75,.18), rgba(255,157,66,.22), rgba(255,79,95,.25));
+  }
+  .media-meta{
+    padding:12px 14px;border-radius:18px;border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+  }
+  .media-name{font-size:14px;font-weight:700;line-height:1.25;color:#eef2f8;word-break:break-word}
+  .media-note{font-size:12px;line-height:1.4;color:#c4ccd8}
+  .media-empty-copy{font-size:12px;line-height:1.45;color:#c7cfdb}
+  .hidden-file{display:none}
+
   .command{margin-top:auto;padding:16px;display:grid;gap:10px}
   .btn{
     min-height:58px;border:none;border-radius:20px;color:#fff;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
@@ -198,7 +244,7 @@
 
   .scale-stage{
     position:relative;
-    min-height:clamp(340px, 56dvh, 760px);
+    min-height:clamp(360px, 58dvh, 760px);
     border-radius:34px;
     overflow:hidden;
     border:1px solid rgba(255,255,255,.12);
@@ -215,41 +261,57 @@
         #ff704f 92%,
         #ff4f5f 100%);
   }
+  .scale-bg-photo{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;
+    filter:saturate(.96) contrast(1.04) brightness(.64);
+    transform:scale(1.015);
+  }
+  .scale-bg-dim{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, rgba(3,6,10,.16) 0%, rgba(3,6,10,.30) 36%, rgba(3,6,10,.62) 100%),
+      radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.10), transparent 38%);
+    pointer-events:none;
+    z-index:1;
+  }
   .scale-stage::before{
     content:"";
     position:absolute; inset:0;
     background:
       linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 20%, rgba(0,0,0,.10) 72%, rgba(0,0,0,.24) 100%),
       radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.12), transparent 40%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.09) 0 1px, transparent 1px 6.25%);
+      repeating-linear-gradient(90deg, rgba(255,255,255,.085) 0 1px, transparent 1px 6.25%);
     pointer-events:none;
     mix-blend-mode:screen;
+    z-index:2;
   }
   .scale-stage::after{
     content:"";
     position:absolute; inset:0;
-    background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) var(--progress), rgba(3,6,10,.30) var(--progress), rgba(3,6,10,.56) 100%);
+    background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) var(--progress), rgba(3,6,10,.24) var(--progress), rgba(3,6,10,.50) 100%);
     pointer-events:none;
+    z-index:2;
   }
   .stage-center{
     position:absolute; inset:0;
     display:flex; flex-direction:column; justify-content:center; align-items:center;
     padding:24px 20px 122px;
     text-align:center;
-    z-index:2;
+    z-index:4;
   }
-  .zone-super{font-size:clamp(26px,7vw,62px); font-weight:900; letter-spacing:.18em; text-transform:uppercase; text-shadow:0 10px 28px rgba(0,0,0,.28)}
-  .time-super{font-size:clamp(46px,15vw,126px); line-height:.9; font-weight:900; letter-spacing:.02em; margin:10px 0 8px; text-shadow:0 12px 30px rgba(0,0,0,.26)}
+  .zone-super{font-size:clamp(26px,7vw,62px); font-weight:900; letter-spacing:.18em; text-transform:uppercase; text-shadow:0 10px 28px rgba(0,0,0,.30)}
+  .time-super{font-size:clamp(44px,15vw,126px); line-height:.9; font-weight:900; letter-spacing:.02em; margin:10px 0 8px; text-shadow:0 12px 30px rgba(0,0,0,.28)}
+  .time-super span{display:block;margin-top:8px;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.94}
   .stage-sub{font-size:12px; letter-spacing:.24em; text-transform:uppercase; opacity:.92}
   .stage-meta{
     position:absolute; left:14px; right:14px; bottom:14px;
     display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
-    z-index:3;
+    z-index:5;
   }
   .meta-pill{
     min-height:56px; padding:12px 14px; border-radius:18px;
     border:1px solid rgba(255,255,255,.14);
-    background:linear-gradient(180deg, rgba(10,14,20,.18), rgba(10,14,20,.30));
+    background:linear-gradient(180deg, rgba(10,14,20,.16), rgba(10,14,20,.30));
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     display:flex; flex-direction:column; justify-content:center;
     min-width:0;
@@ -257,15 +319,10 @@
   .meta-pill .big{font-size:20px; font-weight:900; margin-top:2px}
   .meta-pill.compact{align-items:center; text-align:center}
   .marker-rail{
-    position:absolute; top:14px; bottom:14px; left:var(--progress); width:0; z-index:4;
-    transform:translateX(-1px);
+    position:absolute; top:14px; bottom:14px; left:var(--progress); width:0; z-index:6;
   }
   .marker-rail::before{
     content:""; position:absolute; top:0; bottom:0; left:-2px; width:4px; border-radius:999px;
-    background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.18), 0 0 18px var(--marker-glow), 0 0 42px var(--marker-glow);
-  }
-  .marker-rail::after{
-    content:""; position:absolute; top:-2px; left:-11px; width:22px; height:22px; border-radius:50%;
     background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.22), 0 0 28px rgba(255,255,255,.56);
   }
   .zone-bar{
@@ -287,7 +344,7 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 35px rgba(0,0,0,.25);
     font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#d5dce8;
   }
-  .expired-title{font-size:clamp(26px, 7vw, 34px);font-weight:900;letter-spacing:.08em;margin:0 0 6px}
+  .expired-title{font-size:30px;font-weight:900;letter-spacing:.08em;margin:0 0 6px}
   .expired-sub{margin:0;color:#cdd4df;font-size:14px}
 
   .resolve-options{display:grid;gap:10px}
@@ -309,22 +366,29 @@
 
   .watch-screen{
     position:fixed; inset:0; display:none; flex-direction:column; justify-content:center; align-items:center;
-    padding:calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
-    background:var(--watch-bg); color:#fff; z-index:40; text-align:center;
-    overflow:hidden;
+    padding:calc(22px + var(--safe-top)) 20px calc(22px + var(--safe-bottom));
+    background:var(--watch-bg); color:#fff; z-index:40; text-align:center; overflow:hidden;
   }
   .watch-screen.active{display:flex}
+  .watch-photo{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;
+    filter:saturate(.94) contrast(1.03) brightness(.50);
+    transform:scale(1.02);
+  }
   .watch-screen::before{
     content:""; position:absolute; inset:0;
     background:
+      linear-gradient(180deg, rgba(4,6,10,.16) 0%, rgba(4,6,10,.42) 100%),
       radial-gradient(900px 320px at 50% 0%, rgba(255,255,255,.12), transparent 40%),
       radial-gradient(900px 320px at 50% 100%, rgba(0,0,0,.22), transparent 45%);
     pointer-events:none;
+    z-index:1;
   }
-  .watch-label{font-size:clamp(12px, 3vw, 15px);letter-spacing:.24em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
-  .watch-zone{font-size:clamp(28px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18);word-break:break-word;max-width:100%}
-  .watch-time{font-size:clamp(42px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums;max-width:100%}
-  .watch-hint{font-size:clamp(11px, 3vw, 12px);letter-spacing:.2em;text-transform:uppercase;opacity:.88}
+  .watch-label,.watch-zone,.watch-time,.watch-hint,.watch-severity{position:relative;z-index:2}
+  .watch-label{font-size:15px;letter-spacing:.24em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
+  .watch-zone{font-size:clamp(34px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18)}
+  .watch-time{font-size:clamp(64px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums}
+  .watch-hint{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.88}
   .watch-severity{position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9}
 
   .toast{
@@ -332,71 +396,33 @@
     background:rgba(7,10,15,.88);color:#fff;border:1px solid rgba(255,255,255,.11);border-radius:999px;
     padding:10px 14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:0;pointer-events:none;
     transition:.22s opacity,.22s transform;z-index:60;backdrop-filter:blur(8px);
-    width:max-content; max-width:calc(100vw - 28px);
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  @media (max-width: 760px){
-    .shell{width:100%}
-    .hero{padding:16px}
-    .hero-top{display:grid;grid-template-columns:1fr auto}
-    .panel{padding:14px}
+  @media (max-width:760px){
+    .media-grid{grid-template-columns:1fr}
+    .media-info{gap:12px}
+    .media-stack{grid-template-columns:1fr 1fr}
+  }
+
+  @media (max-width:640px){
+    .app{padding:calc(10px + var(--safe-top)) 10px calc(10px + var(--safe-bottom))}
+    .hero,.panel,.command{padding-left:14px;padding-right:14px}
     .preset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .severity-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-    .severity-btn{min-height:64px;border-radius:18px}
-    .severity-btn .num{font-size:20px}
-    .stage-center{padding:22px 18px 146px}
-    .stage-meta{grid-template-columns:1fr;gap:8px}
-    .meta-pill,.meta-pill.compact{align-items:flex-start;text-align:left}
-    .meta-pill .big{font-size:18px}
+    .severity-btn{min-height:66px;border-radius:16px}
+    .severity-btn .num{font-size:21px}
+    .stage-center{padding:20px 16px 138px}
+    .stage-meta{grid-template-columns:1fr;left:10px;right:10px;bottom:10px}
     .btn-row{grid-template-columns:1fr}
+    .active-top{grid-template-columns:1fr;justify-items:start}
+    .zone-bar div{font-size:9px;padding:10px 4px}
+    .watch-time{font-size:clamp(54px,17vw,102px)}
   }
 
-  @media (max-width: 520px){
-    .app{padding:calc(10px + var(--safe-top)) 10px calc(10px + var(--safe-bottom))}
-    .shell{gap:10px}
-    .hero-top{grid-template-columns:1fr}
-    .seal{min-width:56px;height:56px;border-radius:16px}
-    .slider-row{flex-direction:column;align-items:flex-start;gap:8px}
-    .durationChip,.status-chip{white-space:normal}
-    .severity-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-    .severity-btn{min-height:58px;padding:6px 4px}
-    .severity-btn .num{font-size:18px}
-    .severity-btn .lab{font-size:9px;letter-spacing:.08em}
-    .active-top{grid-template-columns:1fr;align-items:flex-start}
-    .scale-stage{min-height:clamp(340px, 58dvh, 560px);border-radius:28px}
-    .stage-center{padding:20px 16px 162px}
-    .zone-super{font-size:clamp(22px, 8vw, 38px);letter-spacing:.14em}
-    .time-super{font-size:clamp(38px, 16vw, 72px)}
-    .stage-sub{font-size:11px;letter-spacing:.18em}
-    .marker-rail{top:12px;bottom:12px}
-    .marker-rail::before{width:3px;left:-1.5px}
-    .marker-rail::after{left:-9px;width:18px;height:18px}
-    .zone-bar div{padding:10px 4px;font-size:9px;letter-spacing:.08em}
-    .command{padding:12px 0 0}
-    .watch-screen{padding:calc(18px + var(--safe-top)) 14px calc(18px + var(--safe-bottom))}
-    .watch-severity{top:calc(12px + var(--safe-top));right:12px;font-size:11px}
-  }
-
-  @media (min-width: 761px){
-    .shell{width:min(100%, 1100px)}
-    #screen-ready{
-      display:grid;
-      grid-template-columns:1.05fr .95fr;
-      grid-template-areas:
-        "hero hero"
-        "preset custom"
-        "severity severity"
-        "command command";
-      align-content:start;
-    }
-    #screen-ready.active{display:grid}
-    #screen-ready .hero{grid-area:hero}
-    #screen-ready .panel:nth-of-type(1){grid-area:preset}
-    #screen-ready .panel:nth-of-type(2){grid-area:custom}
-    #screen-ready .panel:nth-of-type(3){grid-area:severity}
-    #screen-ready .command{grid-area:command;padding:0}
-    .scale-stage{min-height:clamp(420px, 62dvh, 840px)}
+  @media (min-width:700px){
+    .scale-stage{min-height:64vh}
+    .stage-meta{grid-template-columns:1.2fr auto auto}
   }
 </style>
 </head>
@@ -410,9 +436,9 @@
           <div>
             <div class="eyebrow">Mechanical Time Instrument</div>
             <div class="title">TIMEBOUND</div>
-            <p class="subtitle">Set a bounded window. Track pressure through color. No coaching. No noise. Just time moving toward the edge.</p>
+            <p class="subtitle">Set a bounded window. Track pressure through color. Add an optional local reminder image that stays on your machine unless you move it.</p>
           </div>
-          <div class="seal">v2<br>field</div>
+          <div class="seal">v3<br>local</div>
         </div>
       </div>
 
@@ -434,7 +460,7 @@
               <div class="tiny">Selected Window</div>
               <div id="durationReadout" class="slider-value mono">10<span>MIN</span></div>
             </div>
-            <div id="durationChip" class="status-chip mono">00:10:00</div>
+            <div class="status-chip mono" id="durationChip">00:10:00</div>
           </div>
           <input id="durationSlider" type="range" min="1" max="180" step="1" value="10" />
           <div class="scale-ends"><span>1m</span><span>180m</span></div>
@@ -450,6 +476,30 @@
           <button class="severity-btn" data-severity="4"><div class="num">4</div><div class="lab">High</div></button>
           <button class="severity-btn selected" data-severity="5"><div class="num">5</div><div class="lab">Hard</div></button>
         </div>
+      </div>
+
+      <div class="panel card">
+        <p class="section-title">Reminder Image</p>
+        <div class="media-grid">
+          <div id="mediaWell" class="media-well empty">
+            <img id="mediaPreview" class="media-preview" alt="Reminder preview" />
+            <div class="media-overlay"></div>
+          </div>
+          <div class="media-info">
+            <div class="media-stack">
+              <button id="uploadBtn" class="media-btn primary">Upload Image</button>
+              <button id="cameraBtn" class="media-btn">Take Picture</button>
+              <button id="clearImageBtn" class="media-btn">Clear Image</button>
+            </div>
+            <div class="media-meta">
+              <div class="tiny">Local Only</div>
+              <div id="mediaName" class="media-name">No image selected</div>
+              <p id="mediaCopy" class="media-note">Use any photo as a visual reminder or motivator. It stays in this browser unless you move it.</p>
+            </div>
+          </div>
+        </div>
+        <input id="imageInput" class="hidden-file" type="file" accept="image/*" />
+        <input id="cameraInput" class="hidden-file" type="file" accept="image/*" capture="environment" />
       </div>
 
       <div class="command">
@@ -468,11 +518,13 @@
         </div>
 
         <div class="scale-stage" id="scaleStage">
+          <img id="stagePhoto" class="scale-bg-photo" alt="Reminder background" />
+          <div class="scale-bg-dim"></div>
           <div class="marker-rail" id="marker"></div>
           <div class="stage-center">
             <div id="zoneLabel" class="zone-super">BLUE</div>
-            <div id="remainingReadout" class="time-super mono">10:00</div>
-            <div class="stage-sub">Remaining</div>
+            <div id="remainingReadout" class="time-super mono">10:00<span>Remaining</span></div>
+            <div class="stage-sub">Pressure moving toward edge</div>
           </div>
           <div class="stage-meta">
             <div class="meta-pill">
@@ -555,6 +607,7 @@
 </div>
 
 <div id="watchScreen" class="watch-screen" aria-hidden="true">
+  <img id="watchPhoto" class="watch-photo" alt="Reminder watch background" />
   <div class="watch-severity mono" id="watchSeverity">SEV 5</div>
   <div class="watch-label">Watch Mode</div>
   <div class="watch-zone" id="watchZone">BLUE</div>
@@ -575,6 +628,11 @@
     { name: 'EXPIRED', min: 1.00, max: Infinity, color: '#818796' }
   ];
 
+  const STORAGE_KEYS = {
+    log: 'timebound_log',
+    reminder: 'timebound_reminder_image_v1'
+  };
+
   const state = {
     durationMin: 10,
     durationMs: 10 * 60 * 1000,
@@ -584,7 +642,9 @@
     currentZone: 'BLUE',
     outcome: null,
     audioReady: false,
-    audioCtx: null
+    audioCtx: null,
+    reminderImage: null,
+    reminderName: ''
   };
 
   const el = {
@@ -600,6 +660,15 @@
     durationChip: document.getElementById('durationChip'),
     severityBtns: [...document.querySelectorAll('.severity-btn')],
     startBtn: document.getElementById('startBtn'),
+    uploadBtn: document.getElementById('uploadBtn'),
+    cameraBtn: document.getElementById('cameraBtn'),
+    clearImageBtn: document.getElementById('clearImageBtn'),
+    imageInput: document.getElementById('imageInput'),
+    cameraInput: document.getElementById('cameraInput'),
+    mediaWell: document.getElementById('mediaWell'),
+    mediaPreview: document.getElementById('mediaPreview'),
+    mediaName: document.getElementById('mediaName'),
+    mediaCopy: document.getElementById('mediaCopy'),
     activeSummary: document.getElementById('activeSummary'),
     currentZoneChip: document.getElementById('currentZoneChip'),
     zoneLabel: document.getElementById('zoneLabel'),
@@ -607,6 +676,7 @@
     metaDuration: document.getElementById('metaDuration'),
     metaSeverity: document.getElementById('metaSeverity'),
     metaProgress: document.getElementById('metaProgress'),
+    stagePhoto: document.getElementById('stagePhoto'),
     watchBtn: document.getElementById('watchBtn'),
     abortBtn: document.getElementById('abortBtn'),
     expiredSummary: document.getElementById('expiredSummary'),
@@ -620,13 +690,13 @@
     watchZone: document.getElementById('watchZone'),
     watchTime: document.getElementById('watchTime'),
     watchSeverity: document.getElementById('watchSeverity'),
+    watchPhoto: document.getElementById('watchPhoto'),
     toast: document.getElementById('toast')
   };
 
   function setScreen(name){
     Object.values(el.screens).forEach(node => node.classList.remove('active'));
     el.screens[name].classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
 
   function formatHMS(totalMs){
@@ -670,62 +740,72 @@
     el.watchSeverity.textContent = `SEV ${state.severity}`;
   }
 
-  function updateVisuals(progress){
-    const bounded = Math.max(0, Math.min(progress, 1));
-    const zone = getZone(progress);
-    const percent = `${(bounded * 100).toFixed(3)}%`;
-    document.documentElement.style.setProperty('--progress', percent);
-    document.documentElement.style.setProperty('--zone', zone.color);
-    document.documentElement.style.setProperty('--watch-bg', zone.color === '#f7cc4b' ? '#d5aa26' : zone.color);
-
-    el.zoneLabel.textContent = zone.name;
-    el.currentZoneChip.textContent = zone.name;
-    el.currentZoneChip.style.borderColor = `${zone.color}55`;
-    el.currentZoneChip.style.boxShadow = `inset 0 0 0 1px ${zone.color}25`;
-    el.watchZone.textContent = zone.name;
-    el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
-
-    if (state.currentZone !== zone.name) {
-      handleZoneAudio(state.currentZone, zone.name);
-      state.currentZone = zone.name;
-    }
-  }
-
-  function updateTimer(){
-    if (!state.startTime) return;
-    const elapsed = Date.now() - state.startTime;
-    const remaining = Math.max(0, state.durationMs - elapsed);
-    const progress = elapsed / state.durationMs;
-
-    updateVisuals(progress);
-    const timeText = formatHMS(remaining);
-    el.remainingReadout.textContent = timeText;
-    el.watchTime.textContent = timeText;
-
-    if (progress >= 1) {
-      stopLoop();
-      expireSession();
-      return;
-    }
-
-    state.raf = requestAnimationFrame(updateTimer);
-  }
-
-  function startLoop(){
-    stopLoop();
-    state.raf = requestAnimationFrame(updateTimer);
-  }
-
-  function stopLoop(){
-    if (state.raf) cancelAnimationFrame(state.raf);
-    state.raf = null;
-  }
-
   function showToast(message){
     el.toast.textContent = message;
     el.toast.classList.add('show');
     clearTimeout(showToast.tid);
     showToast.tid = setTimeout(() => el.toast.classList.remove('show'), 1600);
+  }
+
+  function setReminderImage(dataUrl, name = 'Reminder image'){
+    state.reminderImage = dataUrl;
+    state.reminderName = name;
+    el.mediaPreview.src = dataUrl;
+    el.stagePhoto.src = dataUrl;
+    el.watchPhoto.src = dataUrl;
+    el.mediaPreview.style.display = 'block';
+    el.stagePhoto.style.display = 'block';
+    el.watchPhoto.style.display = 'block';
+    el.mediaWell.classList.remove('empty');
+    el.mediaName.textContent = name;
+    el.mediaCopy.textContent = 'Loaded locally. The image is used as a dimmed reminder layer during the session and in watch mode.';
+    try {
+      localStorage.setItem(STORAGE_KEYS.reminder, JSON.stringify({ dataUrl, name }));
+    } catch (err) {
+      console.warn('TIMEBOUND reminder image save failed:', err);
+      showToast('Image loaded for now');
+    }
+  }
+
+  function clearReminderImage(showMessage = true){
+    state.reminderImage = null;
+    state.reminderName = '';
+    [el.mediaPreview, el.stagePhoto, el.watchPhoto].forEach(node => {
+      node.removeAttribute('src');
+      node.style.display = 'none';
+    });
+    el.mediaWell.classList.add('empty');
+    el.mediaName.textContent = 'No image selected';
+    el.mediaCopy.textContent = 'Use any photo as a visual reminder or motivator. It stays in this browser unless you move it.';
+    try {
+      localStorage.removeItem(STORAGE_KEYS.reminder);
+    } catch (err) {
+      console.warn('TIMEBOUND reminder image clear failed:', err);
+    }
+    if (showMessage) showToast('Image cleared');
+  }
+
+  function loadReminderImage(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.reminder);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.dataUrl) setReminderImage(parsed.dataUrl, parsed.name || 'Reminder image');
+    } catch (err) {
+      console.warn('TIMEBOUND reminder image load failed:', err);
+    }
+  }
+
+  function handleSelectedFile(file){
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Select an image file');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setReminderImage(reader.result, file.name || 'Reminder image');
+    reader.onerror = () => showToast('Image load failed');
+    reader.readAsDataURL(file);
   }
 
   function prepareAudio(){
@@ -759,7 +839,8 @@
 
   function handleZoneAudio(prev, next){
     if (!state.audioCtx) return;
-    const baseVol = 0.018 + (state.severity * 0.008);
+    const sev = state.severity;
+    const baseVol = 0.018 + (sev * 0.008);
     if (next === 'RED') {
       for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.72, 'sine', i * 0.13);
       return;
@@ -773,6 +854,57 @@
     ping(520, 0.22, 0.03 + state.severity * 0.004, 'triangle', 0);
   }
 
+  function updateVisuals(progress){
+    const bounded = Math.max(0, Math.min(progress, 1));
+    const zone = getZone(progress);
+    const percent = `${(bounded * 100).toFixed(3)}%`;
+    document.documentElement.style.setProperty('--progress', percent);
+    document.documentElement.style.setProperty('--zone', zone.color);
+    document.documentElement.style.setProperty('--watch-bg', zone.color === '#f7cc4b' ? '#d5aa26' : zone.color);
+
+    el.zoneLabel.textContent = zone.name;
+    el.currentZoneChip.textContent = zone.name;
+    el.currentZoneChip.style.borderColor = `${zone.color}55`;
+    el.currentZoneChip.style.boxShadow = `inset 0 0 0 1px ${zone.color}25`;
+    el.watchZone.textContent = zone.name;
+    el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
+
+    if (state.currentZone !== zone.name) {
+      handleZoneAudio(state.currentZone, zone.name);
+      state.currentZone = zone.name;
+    }
+  }
+
+  function updateTimer(){
+    if (!state.startTime) return;
+    const elapsed = Date.now() - state.startTime;
+    const remaining = Math.max(0, state.durationMs - elapsed);
+    const progress = elapsed / state.durationMs;
+
+    updateVisuals(progress);
+    const timeText = formatHMS(remaining);
+    el.remainingReadout.innerHTML = `${timeText}<span>Remaining</span>`;
+    el.watchTime.textContent = timeText;
+
+    if (progress >= 1) {
+      stopLoop();
+      expireSession();
+      return;
+    }
+
+    state.raf = requestAnimationFrame(updateTimer);
+  }
+
+  function startLoop(){
+    stopLoop();
+    state.raf = requestAnimationFrame(updateTimer);
+  }
+
+  function stopLoop(){
+    if (state.raf) cancelAnimationFrame(state.raf);
+    state.raf = null;
+  }
+
   function startSession(){
     prepareAudio();
     safeResumeAudio();
@@ -784,7 +916,7 @@
     syncActiveStaticUI();
     setScreen('active');
     updateVisuals(0);
-    el.remainingReadout.textContent = formatHMS(state.durationMs);
+    el.remainingReadout.innerHTML = `${formatHMS(state.durationMs)}<span>Remaining</span>`;
     el.watchTime.textContent = formatHMS(state.durationMs);
     startLoop();
   }
@@ -820,13 +952,14 @@
       duration_min: state.durationMin,
       severity: state.severity,
       outcome: state.outcome || 'unmarked',
-      note: el.resolveNote.value.trim()
+      note: el.resolveNote.value.trim(),
+      reminder_image: state.reminderName || null
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem('timebound_log') || '[]');
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.log) || '[]');
       existing.push(payload);
-      localStorage.setItem('timebound_log', JSON.stringify(existing));
+      localStorage.setItem(STORAGE_KEYS.log, JSON.stringify(existing));
     } catch (err) {
       console.warn('TIMEBOUND log save failed:', err);
     }
@@ -851,8 +984,17 @@
     syncSeverityUI();
   }));
 
+  el.uploadBtn.addEventListener('click', () => el.imageInput.click());
+  el.cameraBtn.addEventListener('click', () => el.cameraInput.click());
+  el.clearImageBtn.addEventListener('click', () => clearReminderImage(true));
+  el.imageInput.addEventListener('change', (event) => handleSelectedFile(event.target.files?.[0]));
+  el.cameraInput.addEventListener('change', (event) => handleSelectedFile(event.target.files?.[0]));
+
   el.startBtn.addEventListener('click', startSession);
-  el.watchBtn.addEventListener('click', () => { safeResumeAudio(); enterWatchMode(); });
+  el.watchBtn.addEventListener('click', () => {
+    safeResumeAudio();
+    enterWatchMode();
+  });
   el.abortBtn.addEventListener('click', manualEnd);
   el.resolveBtn.addEventListener('click', () => setScreen('resolve'));
   el.newSessionBtn.addEventListener('click', () => setScreen('ready'));
@@ -881,6 +1023,7 @@
   syncDurationUI();
   syncSeverityUI();
   syncActiveStaticUI();
+  loadReminderImage();
 })();
 </script>
 </body>
