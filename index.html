@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIMEBOUND</title>
+
+<style>
+
+body{
+margin:0;
+font-family:system-ui, -apple-system, Segoe UI, Roboto;
+background:#0b0b0b;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:95%;
+max-width:500px;
+}
+
+h1{
+text-align:center;
+font-weight:600;
+letter-spacing:2px;
+margin-bottom:20px;
+}
+
+.screen{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+background:#222;
+color:white;
+font-size:16px;
+border-radius:6px;
+}
+
+button:hover{
+background:#333;
+}
+
+.gauge{
+height:40px;
+border-radius:6px;
+background:linear-gradient(
+to right,
+#0066ff 0%,
+#8a6bff 25%,
+#ffd700 50%,
+#ff9900 75%,
+#ff2222 95%
+);
+position:relative;
+margin-top:20px;
+}
+
+.marker{
+position:absolute;
+top:0;
+width:4px;
+height:100%;
+background:white;
+}
+
+.label{
+text-align:center;
+font-size:22px;
+margin-top:20px;
+}
+
+.time{
+text-align:center;
+font-size:32px;
+margin-top:10px;
+}
+
+.watch{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+font-size:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>TIMEBOUND</h1>
+
+<!-- READY -->
+
+<div id="ready" class="screen active">
+
+<label>Duration</label>
+
+<select id="duration">
+<option value="180">3 Minutes</option>
+<option value="300">5 Minutes</option>
+<option value="600">10 Minutes</option>
+<option value="1500">25 Minutes</option>
+</select>
+
+<label>Severity</label>
+
+<select id="severity">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<button onclick="startSession()">Start Session</button>
+
+</div>
+
+<!-- ACTIVE -->
+
+<div id="active" class="screen">
+
+<div class="gauge">
+<div class="marker" id="marker"></div>
+</div>
+
+<div class="label" id="zone">BLUE</div>
+<div class="time" id="remaining">00:00</div>
+
+<button onclick="enterWatch()">WATCH MODE</button>
+
+</div>
+
+<!-- EXPIRED -->
+
+<div id="expired" class="screen">
+
+<div class="label">SESSION COMPLETE</div>
+
+<button onclick="openResolve()">Resolve</button>
+
+</div>
+
+<!-- RESOLVE -->
+
+<div id="resolve" class="screen">
+
+<button onclick="saveOutcome('HELD')">Held</button>
+<button onclick="saveOutcome('MISSED')">Missed</button>
+<button onclick="saveOutcome('ACKNOWLEDGED')">Acknowledged</button>
+
+<textarea placeholder="optional note" id="note"></textarea>
+
+<button onclick="reset()">Return</button>
+
+</div>
+
+</div>
+
+<!-- WATCH MODE -->
+
+<div id="watch" class="watch" onclick="exitWatch()">
+<div id="watchZone"></div>
+<div id="watchTime"></div>
+</div>
+
+<script>
+
+let startTime
+let duration
+let timer
+let lastZone=""
+
+function startSession(){
+
+duration=parseInt(document.getElementById("duration").value)
+
+startTime=Date.now()
+
+show("active")
+
+timer=setInterval(update,1000)
+
+}
+
+function update(){
+
+let elapsed=(Date.now()-startTime)/1000
+
+let progress=elapsed/duration
+
+let remaining=Math.max(duration-elapsed,0)
+
+updateGauge(progress)
+
+updateTime(remaining)
+
+let zone=getZone(progress)
+
+if(zone!==lastZone){
+
+ding()
+
+if(zone==="RED") multiDing()
+
+lastZone=zone
+
+}
+
+document.getElementById("zone").innerText=zone
+document.getElementById("watchZone").innerText=zone
+
+setWatchColor(zone)
+
+if(progress>=1){
+
+clearInterval(timer)
+
+tone()
+
+show("expired")
+
+}
+
+}
+
+function updateGauge(p){
+
+let percent=Math.min(p*100,100)
+
+document.getElementById("marker").style.left=percent+"%"
+
+}
+
+function updateTime(sec){
+
+let m=Math.floor(sec/60)
+let s=Math.floor(sec%60)
+
+let t=
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0")
+
+document.getElementById("remaining").innerText=t
+document.getElementById("watchTime").innerText=t
+
+}
+
+function getZone(p){
+
+if(p<.25) return "BLUE"
+if(p<.50) return "LAVENDER"
+if(p<.75) return "GOLD"
+if(p<.95) return "AMBER"
+if(p<1) return "RED"
+
+return "EXPIRED"
+
+}
+
+function enterWatch(){
+
+document.getElementById("watch").style.display="flex"
+
+}
+
+function exitWatch(){
+
+document.getElementById("watch").style.display="none"
+
+}
+
+function setWatchColor(zone){
+
+let w=document.getElementById("watch")
+
+let colors={
+BLUE:"#0066ff",
+LAVENDER:"#8a6bff",
+GOLD:"#ffd700",
+AMBER:"#ff9900",
+RED:"#ff2222"
+}
+
+w.style.background=colors[zone]||"#111"
+
+}
+
+function show(id){
+
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"))
+
+document.getElementById(id).classList.add("active")
+
+}
+
+function openResolve(){
+
+show("resolve")
+
+}
+
+function saveOutcome(result){
+
+console.log(result,document.getElementById("note").value)
+
+reset()
+
+}
+
+function reset(){
+
+location.reload()
+
+}
+
+function ding(){
+
+let ctx=new AudioContext()
+let o=ctx.createOscillator()
+let g=ctx.createGain()
+
+o.connect(g)
+g.connect(ctx.destination)
+
+o.frequency.value=900
+g.gain.value=.1
+
+o.start()
+
+setTimeout(()=>o.stop(),120)
+
+}
+
+function multiDing(){
+
+for(let i=0;i<5;i++)
+setTimeout(ding,i*200)
+
+}
+
+function tone(){
+
+let ctx=new AudioContext()
+let o=ctx.createOscillator()
+let g=ctx.createGain()
+
+o.connect(g)
+g.connect(ctx.destination)
+
+o.frequency.value=300
+g.gain.value=.2
+
+o.start()
+
+setTimeout(()=>o.stop(),400)
+
+}
+
+</script>
+
+</body>
+</html>
