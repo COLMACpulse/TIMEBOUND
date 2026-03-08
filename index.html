@@ -7,9 +7,8 @@
 <style>
   :root{
     --bg:#06070a;
-    --bg2:#0b0e14;
-    --panel:#0d1118;
-    --panel-2:#101522;
+    --panel:#0c1118;
+    --panel-2:#111726;
     --ink:#f5f7fb;
     --muted:#9aa3b2;
     --line:rgba(255,255,255,.08);
@@ -20,15 +19,15 @@
     --amber:#ff9d42;
     --red:#ff4f5f;
     --expired:#818796;
-    --shadow:0 20px 50px rgba(0,0,0,.45);
-    --radius:24px;
-    --radius-sm:16px;
+    --shadow:0 24px 60px rgba(0,0,0,.42);
+    --radius:26px;
+    --radius-sm:18px;
     --safe-top:env(safe-area-inset-top,0px);
     --safe-bottom:env(safe-area-inset-bottom,0px);
     --watch-bg:#111;
-    --zone:#2f8fff;
     --progress:0%;
-    --marker-glow:rgba(255,255,255,.75);
+    --zone:#2f8fff;
+    --marker-glow:rgba(255,255,255,.7);
   }
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -38,25 +37,25 @@
     color:var(--ink);
     font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     background:
-      radial-gradient(1200px 500px at 50% -20%, rgba(154,124,255,.12), transparent 60%),
-      radial-gradient(1000px 500px at 50% 120%, rgba(47,143,255,.08), transparent 55%),
-      linear-gradient(180deg, #090b10 0%, #05060a 100%);
+      radial-gradient(1200px 520px at 50% -10%, rgba(154,124,255,.10), transparent 56%),
+      radial-gradient(1200px 540px at 50% 115%, rgba(47,143,255,.08), transparent 52%),
+      linear-gradient(180deg, #080a10 0%, #05060a 100%);
     overflow:hidden;
   }
 
-  button,input,select,textarea{font:inherit}
+  button,input,textarea{font:inherit}
   button{cursor:pointer}
 
   .app{
     min-height:100%;
-    padding:calc(16px + var(--safe-top)) 14px calc(16px + var(--safe-bottom));
+    padding:calc(14px + var(--safe-top)) 12px calc(14px + var(--safe-bottom));
     display:flex;
     justify-content:center;
     align-items:stretch;
   }
 
   .shell{
-    width:min(100%, 460px);
+    width:min(100%, 720px);
     min-height:100%;
     display:flex;
     flex-direction:column;
@@ -72,40 +71,37 @@
     -webkit-backdrop-filter:blur(10px);
   }
 
-  .screen{display:none; flex-direction:column; gap:12px; min-height:100%}
+  .screen{display:none;flex-direction:column;gap:12px;min-height:100%}
   .screen.active{display:flex}
 
-  .hero{
-    padding:18px 18px 14px;
-    position:relative;
-    overflow:hidden;
-  }
+  .hero{padding:18px; position:relative; overflow:hidden}
   .hero::before{
-    content:"";
-    position:absolute; inset:0;
+    content:""; position:absolute; inset:0;
     background:
-      radial-gradient(500px 120px at 20% 0%, rgba(47,143,255,.12), transparent 45%),
-      radial-gradient(500px 120px at 80% 0%, rgba(255,79,95,.10), transparent 45%);
+      radial-gradient(560px 160px at 15% 0%, rgba(47,143,255,.12), transparent 42%),
+      radial-gradient(560px 160px at 85% 0%, rgba(255,79,95,.10), transparent 42%);
     pointer-events:none;
   }
-  .hero-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; position:relative}
-  .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted)}
-  .title{font-size:32px; font-weight:800; letter-spacing:.08em; margin:4px 0 4px}
-  .subtitle{margin:0; color:#ccd3df; font-size:13px; line-height:1.35; max-width:34ch}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative}
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .title{font-size:32px;font-weight:900;letter-spacing:.08em;margin:4px 0}
+  .subtitle{margin:0;color:#d0d7e3;font-size:13px;line-height:1.35;max-width:36ch}
   .seal{
-    min-width:64px; height:64px; border-radius:18px;
-    display:grid; place-items:center;
+    min-width:68px;height:68px;border-radius:18px;display:grid;place-items:center;
     border:1px solid rgba(255,255,255,.1);
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.025));
     box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
-    color:#d8dfeb; font-size:10px; letter-spacing:.16em; text-transform:uppercase;
-    text-align:center; line-height:1.2; padding:6px;
+    color:#d8dfeb;font-size:10px;letter-spacing:.16em;text-transform:uppercase;text-align:center;line-height:1.2;padding:6px;
   }
 
   .panel{padding:16px}
-  .section-title{font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--muted); margin:0 0 12px}
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin:0 0 12px}
 
-  .preset-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+  .preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .preset,.severity-btn,.resolve-btn,.btn{
+    transition:.18s transform,.18s border-color,.18s background,.18s box-shadow;
+  }
+  .preset:active,.severity-btn:active,.resolve-btn:active,.btn:active{transform:scale(.987)}
   .preset{
     border:1px solid var(--line);
     color:var(--ink);
@@ -114,57 +110,46 @@
     min-height:62px;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:3px;
-    transition:.18s transform,.18s border-color,.18s background;
   }
-  .preset:active{transform:scale(.985)}
-  .preset .big{font-size:18px; font-weight:800}
-  .preset .small{font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-  .preset.selected{border-color:rgba(255,255,255,.22); background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04))}
+  .preset .big{font-size:18px;font-weight:800}
+  .preset .small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .preset.selected{border-color:rgba(255,255,255,.22);background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04))}
 
   .slider-wrap{
-    padding:14px; border-radius:20px; border:1px solid var(--line);
+    padding:14px;border-radius:20px;border:1px solid var(--line);
     background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
   }
-  .slider-row{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px}
-  .slider-value{font-size:36px; font-weight:800; letter-spacing:.02em}
-  .slider-value span{font-size:13px; color:var(--muted); font-weight:700; margin-left:6px}
-  .scale-ends{display:flex; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:11px; letter-spacing:.16em; text-transform:uppercase}
+  .slider-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
+  .slider-value{font-size:36px;font-weight:900;letter-spacing:.02em}
+  .slider-value span{font-size:13px;color:var(--muted);font-weight:700;margin-left:6px}
+  .scale-ends{display:flex;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
 
   input[type="range"]{
-    appearance:none; width:100%; height:8px; border-radius:999px;
-    background:linear-gradient(90deg, rgba(47,143,255,.3), rgba(154,124,255,.35), rgba(247,204,75,.4), rgba(255,157,66,.45), rgba(255,79,95,.55));
+    appearance:none;width:100%;height:10px;border-radius:999px;
+    background:linear-gradient(90deg, rgba(47,143,255,.35), rgba(154,124,255,.4), rgba(247,204,75,.44), rgba(255,157,66,.48), rgba(255,79,95,.56));
     outline:none;
   }
   input[type="range"]::-webkit-slider-thumb{
-    appearance:none; width:26px; height:26px; border-radius:50%; background:#fff;
-    border:4px solid #0d1118; box-shadow:0 0 0 2px rgba(255,255,255,.18), 0 8px 18px rgba(0,0,0,.38);
+    appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;
+    border:4px solid #0d1118;box-shadow:0 0 0 2px rgba(255,255,255,.18), 0 8px 18px rgba(0,0,0,.38);
   }
   input[type="range"]::-moz-range-thumb{
-    width:26px; height:26px; border-radius:50%; background:#fff; border:4px solid #0d1118;
+    width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid #0d1118;
   }
 
-  .severity-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+  .severity-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
   .severity-btn{
-    min-height:72px; border-radius:20px; border:1px solid var(--line);
+    min-height:72px;border-radius:20px;border:1px solid var(--line);
     background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    color:var(--ink);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:4px;
-    transition:.18s transform,.18s border-color,.18s background;
+    color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   }
-  .severity-btn:active{transform:scale(.985)}
-  .severity-btn .num{font-size:24px; font-weight:800}
-  .severity-btn .lab{font-size:10px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase}
-  .severity-btn.selected{border-color:rgba(255,255,255,.25); background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
+  .severity-btn .num{font-size:24px;font-weight:900}
+  .severity-btn .lab{font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+  .severity-btn.selected{border-color:rgba(255,255,255,.25);background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
 
-  .command{
-    margin-top:auto;
-    padding:16px;
-    display:grid; grid-template-columns:1fr; gap:10px;
-  }
+  .command{margin-top:auto;padding:16px;display:grid;gap:10px}
   .btn{
-    min-height:58px; border:none; border-radius:20px; color:#fff;
-    font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    min-height:58px;border:none;border-radius:20px;color:#fff;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
     border:1px solid rgba(255,255,255,.12);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.25);
@@ -176,153 +161,176 @@
   }
   .btn.subtle{background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03))}
   .btn.ghost{background:rgba(255,255,255,.03)}
-  .btn-row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-  .top-strip{
-    padding:14px 16px;
-    display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
-  }
-  .mono{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1, "ss01" 1}
-  .tiny{font-size:11px; text-transform:uppercase; letter-spacing:.16em; color:var(--muted)}
-  .micro{font-size:12px; color:#d6dbe4}
+  .tiny{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}
+  .micro{font-size:12px;color:#d6dbe4}
+  .mono{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1}
   .status-chip{
-    border-radius:999px; padding:8px 10px; border:1px solid var(--line);
-    background:rgba(255,255,255,.035); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    border-radius:999px;padding:8px 10px;border:1px solid var(--line);
+    background:rgba(255,255,255,.035);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   }
 
-  .gauge-card{padding:16px; overflow:hidden; position:relative}
-  .gauge-card::before{
-    content:""; position:absolute; inset:0;
-    background:radial-gradient(400px 90px at 50% -15%, rgba(255,255,255,.045), transparent 60%);
-    pointer-events:none;
+  /* ACTIVE — full / near-full screen gradient severity scale */
+  #screen-active{gap:10px}
+  .active-shell{
+    flex:1;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    min-height:100%;
+    gap:10px;
   }
-  .gauge-head{display:flex; justify-content:space-between; align-items:end; gap:12px; margin-bottom:12px; position:relative}
-  .zone-readout{font-size:28px; font-weight:900; letter-spacing:.08em}
-  .remain{font-size:48px; font-weight:900; letter-spacing:.02em; line-height:1}
-  .remain span{display:block; font-size:11px; letter-spacing:.18em; color:var(--muted); text-transform:uppercase; margin-top:6px}
+  .active-top{
+    padding:12px 14px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:center;
+  }
+  .active-summary{display:flex;flex-direction:column;gap:4px}
 
-  .field{
-    position:relative; height:108px; border-radius:26px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.11);
+  .scale-stage{
+    position:relative;
+    min-height:52vh;
+    border-radius:34px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:var(--shadow);
     background:
       linear-gradient(90deg,
-        rgba(47,143,255,1) 0%,
-        rgba(47,143,255,1) 25%,
-        rgba(154,124,255,1) 25%,
-        rgba(154,124,255,1) 50%,
-        rgba(247,204,75,1) 50%,
-        rgba(247,204,75,1) 75%,
-        rgba(255,157,66,1) 75%,
-        rgba(255,157,66,1) 95%,
-        rgba(255,79,95,1) 95%,
-        rgba(255,79,95,1) 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -12px 26px rgba(0,0,0,.18);
+        #2f8fff 0%,
+        #5b8eff 12%,
+        #9a7cff 28%,
+        #cc83ff 40%,
+        #f7cc4b 55%,
+        #ffbf4d 68%,
+        #ff9d42 82%,
+        #ff704f 92%,
+        #ff4f5f 100%);
   }
-  .field::before{
-    content:""; position:absolute; inset:0;
+  .scale-stage::before{
+    content:"";
+    position:absolute; inset:0;
     background:
-      linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 35%, rgba(0,0,0,.18) 100%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 1px, transparent 1px 8.333%),
-      linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,0));
+      linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 20%, rgba(0,0,0,.10) 72%, rgba(0,0,0,.24) 100%),
+      radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.12), transparent 40%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.09) 0 1px, transparent 1px 6.25%);
+    pointer-events:none;
     mix-blend-mode:screen;
+  }
+  .scale-stage::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) var(--progress), rgba(3,6,10,.36) var(--progress), rgba(3,6,10,.60) 100%);
     pointer-events:none;
   }
-  .field::after{
-    content:""; position:absolute; inset:0;
-    background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) var(--progress), rgba(0,0,0,.47) var(--progress), rgba(0,0,0,.47) 100%);
-    pointer-events:none;
+  .stage-center{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    padding:28px 20px;
+    text-align:center;
+    z-index:2;
   }
-  .marker{
-    position:absolute; top:10px; bottom:10px; left:var(--progress); width:0;
+  .zone-super{font-size:clamp(30px,7vw,62px); font-weight:900; letter-spacing:.18em; text-transform:uppercase; text-shadow:0 10px 28px rgba(0,0,0,.28)}
+  .time-super{font-size:clamp(58px,15vw,126px); line-height:.9; font-weight:900; letter-spacing:.02em; margin:10px 0 8px; text-shadow:0 12px 30px rgba(0,0,0,.26)}
+  .stage-sub{font-size:12px; letter-spacing:.24em; text-transform:uppercase; opacity:.92}
+  .stage-meta{
+    position:absolute; left:14px; right:14px; bottom:14px;
+    display:grid; grid-template-columns:1fr auto auto; gap:10px;
+    z-index:3;
+  }
+  .meta-pill{
+    min-height:56px; padding:12px 14px; border-radius:18px;
+    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(180deg, rgba(10,14,20,.18), rgba(10,14,20,.30));
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .meta-pill .big{font-size:20px; font-weight:900; margin-top:2px}
+  .meta-pill.compact{min-width:108px; align-items:center; text-align:center}
+  .marker-rail{
+    position:absolute; top:14px; bottom:14px; left:var(--progress); width:0; z-index:4;
     transform:translateX(-1px);
-    pointer-events:none;
   }
-  .marker::before{
-    content:""; position:absolute; top:0; bottom:0; left:-1.5px; width:3px; border-radius:999px;
-    background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.18), 0 0 18px var(--marker-glow), 0 0 38px var(--marker-glow);
+  .marker-rail::before{
+    content:""; position:absolute; top:0; bottom:0; left:-2px; width:4px; border-radius:999px;
+    background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.18), 0 0 18px var(--marker-glow), 0 0 42px var(--marker-glow);
   }
-  .marker::after{
-    content:""; position:absolute; top:-2px; left:-9px; width:18px; height:18px; border-radius:50%;
-    background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.22), 0 0 26px rgba(255,255,255,.5);
+  .marker-rail::after{
+    content:""; position:absolute; top:-2px; left:-11px; width:22px; height:22px; border-radius:50%;
+    background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.22), 0 0 28px rgba(255,255,255,.56);
   }
-  .zone-legend{display:grid; grid-template-columns:25fr 25fr 25fr 20fr 5fr; gap:0; margin-top:10px; border-radius:16px; overflow:hidden; border:1px solid var(--line)}
-  .zone-legend div{padding:10px 8px; text-align:center; font-size:10px; letter-spacing:.14em; text-transform:uppercase; font-weight:800}
+  .zone-bar{
+    display:grid; grid-template-columns:25fr 25fr 25fr 20fr 5fr;
+    overflow:hidden; border-radius:18px; border:1px solid var(--line);
+  }
+  .zone-bar div{padding:11px 8px; text-align:center; font-size:10px; letter-spacing:.14em; text-transform:uppercase; font-weight:900}
   .z-blue{background:rgba(47,143,255,.12)}
   .z-lav{background:rgba(154,124,255,.12)}
   .z-gold{background:rgba(247,204,75,.12)}
   .z-amber{background:rgba(255,157,66,.12)}
   .z-red{background:rgba(255,79,95,.12)}
 
-  .meta-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
-  .meta-box{padding:14px; border-radius:18px; border:1px solid var(--line); background:rgba(255,255,255,.03)}
-  .meta-box .value{font-size:22px; font-weight:800; margin-top:3px}
-  .meta-box .value.smallish{font-size:16px}
-
-  .expired-hero{
-    padding:28px 18px 20px;
-    text-align:center;
-  }
+  .expired-hero{padding:28px 18px 20px;text-align:center}
   .expired-ring{
-    width:110px; height:110px; border-radius:50%; margin:0 auto 16px;
-    border:1px solid rgba(255,255,255,.12);
-    display:grid; place-items:center;
+    width:110px;height:110px;border-radius:50%;margin:0 auto 16px;
+    border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;
     background:radial-gradient(circle at 50% 35%, rgba(255,255,255,.1), rgba(255,255,255,.03) 48%, rgba(0,0,0,.15) 100%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 35px rgba(0,0,0,.25);
-    font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#d5dce8;
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#d5dce8;
   }
-  .expired-title{font-size:30px; font-weight:900; letter-spacing:.08em; margin:0 0 6px}
-  .expired-sub{margin:0; color:#cdd4df; font-size:14px}
+  .expired-title{font-size:30px;font-weight:900;letter-spacing:.08em;margin:0 0 6px}
+  .expired-sub{margin:0;color:#cdd4df;font-size:14px}
 
-  .resolve-options{display:grid; grid-template-columns:1fr; gap:10px}
+  .resolve-options{display:grid;gap:10px}
   .resolve-btn{
-    min-height:62px; text-align:left; padding:14px 16px; border-radius:20px; border:1px solid var(--line);
+    min-height:62px;text-align:left;padding:14px 16px;border-radius:20px;border:1px solid var(--line);
     background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); color:#fff;
-    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
   }
-  .resolve-btn strong{display:block; font-size:15px; letter-spacing:.06em; text-transform:uppercase}
-  .resolve-btn span{display:block; color:var(--muted); font-size:12px; margin-top:4px}
-  .resolve-btn.active{border-color:rgba(255,255,255,.22); background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
+  .resolve-btn strong{display:block;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+  .resolve-btn span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .resolve-btn.active{border-color:rgba(255,255,255,.22);background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
 
-  .note-wrap{padding:14px; border-radius:20px; border:1px solid var(--line); background:rgba(255,255,255,.03)}
+  .note-wrap{padding:14px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
   textarea{
-    width:100%; min-height:108px; resize:vertical; border-radius:16px; border:1px solid var(--line-2);
-    background:#0a0d13; color:#fff; padding:14px; outline:none;
+    width:100%;min-height:108px;resize:vertical;border-radius:16px;border:1px solid var(--line-2);
+    background:#0a0d13;color:#fff;padding:14px;outline:none;
   }
   textarea::placeholder{color:#728096}
 
   .watch-screen{
     position:fixed; inset:0; display:none; flex-direction:column; justify-content:center; align-items:center;
     padding:calc(22px + var(--safe-top)) 20px calc(22px + var(--safe-bottom));
-    background:var(--watch-bg);
-    color:#fff;
-    z-index:40;
-    text-align:center;
+    background:var(--watch-bg); color:#fff; z-index:40; text-align:center;
   }
   .watch-screen.active{display:flex}
   .watch-screen::before{
     content:""; position:absolute; inset:0;
     background:
-      radial-gradient(900px 300px at 50% 0%, rgba(255,255,255,.12), transparent 40%),
-      radial-gradient(900px 300px at 50% 100%, rgba(0,0,0,.22), transparent 45%);
+      radial-gradient(900px 320px at 50% 0%, rgba(255,255,255,.12), transparent 40%),
+      radial-gradient(900px 320px at 50% 100%, rgba(0,0,0,.22), transparent 45%);
     pointer-events:none;
   }
-  .watch-label{font-size:15px; letter-spacing:.24em; text-transform:uppercase; opacity:.92; margin-bottom:10px}
-  .watch-zone{font-size:clamp(34px,9vw,68px); line-height:.94; font-weight:900; letter-spacing:.12em; text-transform:uppercase; text-shadow:0 6px 18px rgba(0,0,0,.18)}
-  .watch-time{font-size:clamp(64px,18vw,128px); line-height:.95; font-weight:900; margin:14px 0 10px; font-variant-numeric:tabular-nums}
-  .watch-hint{font-size:12px; letter-spacing:.2em; text-transform:uppercase; opacity:.88}
-  .watch-severity{position:absolute; top:calc(16px + var(--safe-top)); right:16px; font-size:12px; letter-spacing:.18em; text-transform:uppercase; opacity:.9}
+  .watch-label{font-size:15px;letter-spacing:.24em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
+  .watch-zone{font-size:clamp(34px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18)}
+  .watch-time{font-size:clamp(64px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums}
+  .watch-hint{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.88}
+  .watch-severity{position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9}
 
   .toast{
-    position:fixed; left:50%; bottom:calc(18px + var(--safe-bottom)); transform:translateX(-50%) translateY(20px);
-    background:rgba(7,10,15,.88); color:#fff; border:1px solid rgba(255,255,255,.11); border-radius:999px;
-    padding:10px 14px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; opacity:0; pointer-events:none;
-    transition:.22s opacity,.22s transform; z-index:60; backdrop-filter:blur(8px);
+    position:fixed;left:50%;bottom:calc(18px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);
+    background:rgba(7,10,15,.88);color:#fff;border:1px solid rgba(255,255,255,.11);border-radius:999px;
+    padding:10px 14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:0;pointer-events:none;
+    transition:.22s opacity,.22s transform;z-index:60;backdrop-filter:blur(8px);
   }
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   @media (min-width:700px){
-    .app{padding:22px}
-    .shell{max-width:560px}
+    .shell{width:min(100%, 980px)}
+    .app{padding:18px}
+    .scale-stage{min-height:64vh}
+    .stage-meta{grid-template-columns:1.2fr auto auto}
   }
 </style>
 </head>
@@ -338,7 +346,7 @@
             <div class="title">TIMEBOUND</div>
             <p class="subtitle">Set a bounded window. Track pressure through color. No coaching. No noise. Just time moving toward the edge.</p>
           </div>
-          <div class="seal">v1<br>signal</div>
+          <div class="seal">v2<br>field</div>
         </div>
       </div>
 
@@ -369,7 +377,7 @@
 
       <div class="panel card">
         <p class="section-title">Severity</p>
-        <div class="severity-grid" id="severityGrid">
+        <div class="severity-grid">
           <button class="severity-btn" data-severity="1"><div class="num">1</div><div class="lab">Low</div></button>
           <button class="severity-btn" data-severity="2"><div class="num">2</div><div class="lab">Light</div></button>
           <button class="severity-btn" data-severity="3"><div class="num">3</div><div class="lab">Medium</div></button>
@@ -384,58 +392,52 @@
     </section>
 
     <section id="screen-active" class="screen">
-      <div class="top-strip card">
-        <div>
-          <div class="tiny">Active Session</div>
-          <div id="activeSummary" class="micro mono">10 MIN • SEV 5</div>
-        </div>
-        <div id="currentZoneChip" class="status-chip">Blue</div>
-      </div>
-
-      <div class="gauge-card card">
-        <div class="gauge-head">
-          <div>
-            <div class="tiny">Current Zone</div>
-            <div id="zoneLabel" class="zone-readout">BLUE</div>
+      <div class="active-shell">
+        <div class="active-top card">
+          <div class="active-summary">
+            <div class="tiny">Active Session</div>
+            <div id="activeSummary" class="micro mono">10 MIN • SEV 5</div>
           </div>
-          <div class="remain mono" id="remainingReadout">10:00<span>Remaining</span></div>
+          <div id="currentZoneChip" class="status-chip">Blue</div>
         </div>
 
-        <div class="field" id="field">
-          <div class="marker" id="marker"></div>
-        </div>
-
-        <div class="zone-legend tiny">
-          <div class="z-blue">Blue</div>
-          <div class="z-lav">Lav</div>
-          <div class="z-gold">Gold</div>
-          <div class="z-amber">Amber</div>
-          <div class="z-red">Red</div>
-        </div>
-      </div>
-
-      <div class="panel card">
-        <p class="section-title">Instrument State</p>
-        <div class="meta-grid">
-          <div class="meta-box">
-            <div class="tiny">Duration</div>
-            <div id="metaDuration" class="value mono">10m</div>
+        <div class="scale-stage" id="scaleStage">
+          <div class="marker-rail" id="marker"></div>
+          <div class="stage-center">
+            <div id="zoneLabel" class="zone-super">BLUE</div>
+            <div id="remainingReadout" class="time-super mono">10:00</div>
+            <div class="stage-sub">Remaining</div>
           </div>
-          <div class="meta-box">
-            <div class="tiny">Severity</div>
-            <div id="metaSeverity" class="value">5</div>
-          </div>
-          <div class="meta-box">
-            <div class="tiny">Progress</div>
-            <div id="metaProgress" class="value smallish mono">0.0%</div>
+          <div class="stage-meta">
+            <div class="meta-pill">
+              <div class="tiny">Instrument State</div>
+              <div class="big mono" id="metaProgress">0.0%</div>
+            </div>
+            <div class="meta-pill compact">
+              <div class="tiny">Duration</div>
+              <div class="big mono" id="metaDuration">10m</div>
+            </div>
+            <div class="meta-pill compact">
+              <div class="tiny">Severity</div>
+              <div class="big" id="metaSeverity">5</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="command">
-        <div class="btn-row">
-          <button id="watchBtn" class="btn primary">Watch Mode</button>
-          <button id="abortBtn" class="btn subtle">End Session</button>
+        <div class="panel card">
+          <div class="zone-bar tiny">
+            <div class="z-blue">Blue</div>
+            <div class="z-lav">Lav</div>
+            <div class="z-gold">Gold</div>
+            <div class="z-amber">Amber</div>
+            <div class="z-red">Red</div>
+          </div>
+          <div class="command" style="padding:12px 0 0; margin:0;">
+            <div class="btn-row">
+              <button id="watchBtn" class="btn primary">Watch Mode</button>
+              <button id="abortBtn" class="btn subtle">End Session</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -455,7 +457,7 @@
     <section id="screen-resolve" class="screen">
       <div class="panel card">
         <p class="section-title">Resolve Outcome</p>
-        <div class="resolve-options" id="resolveOptions">
+        <div class="resolve-options">
           <button class="resolve-btn" data-outcome="held">
             <div><strong>Mark Held</strong><span>Window was honored.</span></div>
             <div class="tiny">01</div>
@@ -516,8 +518,7 @@
     currentZone: 'BLUE',
     outcome: null,
     audioReady: false,
-    audioCtx: null,
-    endedManually: false
+    audioCtx: null
   };
 
   const el = {
@@ -537,8 +538,6 @@
     currentZoneChip: document.getElementById('currentZoneChip'),
     zoneLabel: document.getElementById('zoneLabel'),
     remainingReadout: document.getElementById('remainingReadout'),
-    field: document.getElementById('field'),
-    marker: document.getElementById('marker'),
     metaDuration: document.getElementById('metaDuration'),
     metaSeverity: document.getElementById('metaSeverity'),
     metaProgress: document.getElementById('metaProgress'),
@@ -588,21 +587,11 @@
     el.durationSlider.value = state.durationMin;
     el.durationReadout.innerHTML = `${state.durationMin}<span>MIN</span>`;
     el.durationChip.textContent = formatHMS(state.durationMs);
-
-    el.presetBtns.forEach(btn => {
-      btn.classList.toggle('selected', Number(btn.dataset.min) === state.durationMin);
-    });
+    el.presetBtns.forEach(btn => btn.classList.toggle('selected', Number(btn.dataset.min) === state.durationMin));
   }
 
   function syncSeverityUI(){
-    el.severityBtns.forEach(btn => {
-      btn.classList.toggle('selected', Number(btn.dataset.severity) === state.severity);
-    });
-  }
-
-  function syncReadyUI(){
-    syncDurationUI();
-    syncSeverityUI();
+    el.severityBtns.forEach(btn => btn.classList.toggle('selected', Number(btn.dataset.severity) === state.severity));
   }
 
   function syncActiveStaticUI(){
@@ -618,17 +607,15 @@
     const bounded = Math.max(0, Math.min(progress, 1));
     const zone = getZone(progress);
     const percent = `${(bounded * 100).toFixed(3)}%`;
-    const zoneTitle = zone.name;
-    const zoneLabelText = zone.name;
     document.documentElement.style.setProperty('--progress', percent);
     document.documentElement.style.setProperty('--zone', zone.color);
     document.documentElement.style.setProperty('--watch-bg', zone.color === '#f7cc4b' ? '#d5aa26' : zone.color);
 
-    el.zoneLabel.textContent = zoneLabelText;
-    el.currentZoneChip.textContent = zoneTitle;
+    el.zoneLabel.textContent = zone.name;
+    el.currentZoneChip.textContent = zone.name;
     el.currentZoneChip.style.borderColor = `${zone.color}55`;
     el.currentZoneChip.style.boxShadow = `inset 0 0 0 1px ${zone.color}25`;
-    el.watchZone.textContent = zoneLabelText;
+    el.watchZone.textContent = zone.name;
     el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
 
     if (state.currentZone !== zone.name) {
@@ -645,7 +632,7 @@
 
     updateVisuals(progress);
     const timeText = formatHMS(remaining);
-    el.remainingReadout.innerHTML = `${timeText}<span>Remaining</span>`;
+    el.remainingReadout.textContent = timeText;
     el.watchTime.textContent = timeText;
 
     if (progress >= 1) {
@@ -705,8 +692,7 @@
 
   function handleZoneAudio(prev, next){
     if (!state.audioCtx) return;
-    const sev = state.severity;
-    const baseVol = 0.018 + (sev * 0.008);
+    const baseVol = 0.018 + (state.severity * 0.008);
     if (next === 'RED') {
       for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.72, 'sine', i * 0.13);
       return;
@@ -724,7 +710,6 @@
     prepareAudio();
     safeResumeAudio();
     state.startTime = Date.now();
-    state.endedManually = false;
     state.currentZone = 'BLUE';
     state.outcome = null;
     el.resolveNote.value = '';
@@ -732,7 +717,7 @@
     syncActiveStaticUI();
     setScreen('active');
     updateVisuals(0);
-    el.remainingReadout.innerHTML = `${formatHMS(state.durationMs)}<span>Remaining</span>`;
+    el.remainingReadout.textContent = formatHMS(state.durationMs);
     el.watchTime.textContent = formatHMS(state.durationMs);
     startLoop();
   }
@@ -747,7 +732,6 @@
   function manualEnd(){
     stopLoop();
     state.startTime = null;
-    state.endedManually = true;
     exitWatchMode(false);
     setScreen('expired');
   }
@@ -757,10 +741,10 @@
     el.watchScreen.setAttribute('aria-hidden', 'false');
   }
 
-  function exitWatchMode(showToastHint = false){
+  function exitWatchMode(showHint = false){
     el.watchScreen.classList.remove('active');
     el.watchScreen.setAttribute('aria-hidden', 'true');
-    if (showToastHint) showToast('Watch Mode Off');
+    if (showHint) showToast('Watch Mode Off');
   }
 
   function saveOutcome(){
@@ -801,10 +785,7 @@
   }));
 
   el.startBtn.addEventListener('click', startSession);
-  el.watchBtn.addEventListener('click', () => {
-    safeResumeAudio();
-    enterWatchMode();
-  });
+  el.watchBtn.addEventListener('click', () => { safeResumeAudio(); enterWatchMode(); });
   el.abortBtn.addEventListener('click', manualEnd);
   el.resolveBtn.addEventListener('click', () => setScreen('resolve'));
   el.newSessionBtn.addEventListener('click', () => setScreen('ready'));
@@ -817,7 +798,6 @@
   }));
 
   el.saveResolveBtn.addEventListener('click', saveOutcome);
-
   el.watchScreen.addEventListener('click', () => exitWatchMode(true));
 
   ['pointerdown','touchstart','keydown'].forEach(evt => {
@@ -831,7 +811,8 @@
     if (document.hidden && el.watchScreen.classList.contains('active')) exitWatchMode(false);
   });
 
-  syncReadyUI();
+  syncDurationUI();
+  syncSeverityUI();
   syncActiveStaticUI();
 })();
 </script>
