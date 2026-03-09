@@ -331,6 +331,7 @@
     max-width:100%;
   }
   .active-event.hidden{display:none}
+  .signal-hidden{display:none !important}
 
   .scale-stage{
     position:relative;
@@ -339,17 +340,16 @@
     overflow:hidden;
     border:1px solid rgba(255,255,255,.12);
     box-shadow:var(--shadow);
-    background:
-      linear-gradient(90deg,
-        #2f8fff 0%,
-        #5b8eff 12%,
-        #9a7cff 28%,
-        #cc83ff 40%,
-        #f7cc4b 55%,
-        #ffbf4d 68%,
-        #ff9d42 82%,
-        #ff7d55 92%,
-        #ff4f5f 100%);
+    background:linear-gradient(90deg,
+      rgba(47,143,255,var(--ghost-alpha)) 0%,
+      rgba(91,142,255,var(--ghost-alpha)) 12%,
+      rgba(154,124,255,var(--ghost-alpha)) 28%,
+      rgba(204,131,255,var(--ghost-alpha)) 40%,
+      rgba(247,204,75,var(--ghost-alpha)) 55%,
+      rgba(255,191,77,var(--ghost-alpha)) 68%,
+      rgba(255,157,66,var(--ghost-alpha)) 82%,
+      rgba(255,125,85,var(--ghost-alpha)) 92%,
+      rgba(255,79,95,var(--ghost-alpha)) 100%);
     filter:saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness));
     transform-origin:center center;
     will-change:filter,transform;
@@ -358,17 +358,49 @@
     content:"";
     position:absolute; inset:0;
     background:
-      radial-gradient(120% 85% at 50% 0%, rgba(255,255,255,.20), transparent 34%),
-      linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04) 18%, rgba(0,0,0,.09) 62%, rgba(0,0,0,.28) 100%);
+      radial-gradient(120% 85% at 50% 0%, rgba(255,255,255,.12), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02) 18%, rgba(0,0,0,.07) 62%, rgba(0,0,0,.18) 100%);
     pointer-events:none;
   }
   .scale-stage::after{
     content:"";
     position:absolute; inset:0;
-    background:
-      linear-gradient(180deg, rgba(6,7,10,.10) 0%, rgba(6,7,10,.15) 24%, rgba(6,7,10,.22) 54%, rgba(6,7,10,var(--stage-floor)) 100%);
+    background:linear-gradient(180deg, rgba(6,7,10,.06) 0%, rgba(6,7,10,.10) 24%, rgba(6,7,10,.14) 54%, rgba(6,7,10,var(--stage-floor)) 100%);
     pointer-events:none;
     z-index:1;
+  }
+  .reveal-field{
+    position:absolute;
+    inset:0 auto 0 0;
+    width:var(--reveal-width);
+    min-width:4px;
+    background:linear-gradient(90deg,
+      #2f8fff 0%,
+      #5b8eff 12%,
+      #9a7cff 28%,
+      #cc83ff 40%,
+      #f7cc4b 55%,
+      #ffbf4d 68%,
+      #ff9d42 82%,
+      #ff7d55 92%,
+      #ff4f5f 100%);
+    z-index:0;
+  }
+  .reveal-field::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; right:0;
+    width:2px;
+    background:rgba(255,255,255,.55);
+    box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 12px rgba(255,255,255,.24);
+  }
+  .signal-pillars{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+  }
+  .signal-pillars span{
+    position:absolute; top:10px; bottom:10px; width:1px;
+    background:rgba(255,255,255,var(--pillar-alpha));
+    box-shadow:0 0 0 1px rgba(255,255,255,.02);
   }
   .stage-reminder-wrap,
   .watch-reminder-wrap{
@@ -552,6 +584,8 @@
     transition:background .18s ease-out, filter .18s ease-out;
   }
   .watch-screen.active{display:flex}
+  .watch-face{position:relative; width:min(100%, 860px); height:min(72dvh, 760px); border-radius:34px; overflow:hidden; border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); background:linear-gradient(90deg, rgba(47,143,255,var(--ghost-alpha)) 0%, rgba(91,142,255,var(--ghost-alpha)) 12%, rgba(154,124,255,var(--ghost-alpha)) 28%, rgba(204,131,255,var(--ghost-alpha)) 40%, rgba(247,204,75,var(--ghost-alpha)) 55%, rgba(255,191,77,var(--ghost-alpha)) 68%, rgba(255,157,66,var(--ghost-alpha)) 82%, rgba(255,125,85,var(--ghost-alpha)) 92%, rgba(255,79,95,var(--ghost-alpha)) 100%);}
+  .watch-face::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(6,7,10,.06) 0%, rgba(6,7,10,.10) 24%, rgba(6,7,10,.14) 54%, rgba(6,7,10,var(--stage-floor)) 100%);z-index:1;pointer-events:none;}
   .watch-screen::before{
     content:""; position:absolute; inset:0;
     background:
@@ -560,10 +594,10 @@
     pointer-events:none;
     z-index:0;
   }
-  .watch-label{position:relative;z-index:2;font-size:clamp(12px, 3vw, 15px);letter-spacing:.24em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
-  .watch-zone{position:relative;z-index:2;font-size:clamp(28px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18);word-break:break-word;max-width:100%}
-  .watch-time{position:relative;z-index:2;font-size:clamp(42px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums;max-width:100%}
-  .watch-event{
+  .watch-label{position:relative;z-index:2;font-size:clamp(11px, 3vw, 12px);letter-spacing:.24em;text-transform:uppercase;opacity:.72;margin-top:14px}
+  .watch-zone{display:none;position:relative;z-index:2;font-size:clamp(28px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18);word-break:break-word;max-width:100%}
+  .watch-time{display:none;position:relative;z-index:2;font-size:clamp(42px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums;max-width:100%}
+  .watch-event{display:none;
     position:relative;
     z-index:2;
     margin:6px 0 12px;
@@ -582,7 +616,7 @@
   }
   .watch-event.hidden{display:none}
   .watch-hint{position:relative;z-index:2;font-size:clamp(11px, 3vw, 12px);letter-spacing:.2em;text-transform:uppercase;opacity:.88}
-  .watch-severity{position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9;z-index:2}
+  .watch-severity{display:none;position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9;z-index:2}
 
   .toast{
     position:fixed;left:50%;bottom:calc(18px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);
@@ -639,7 +673,8 @@
     .zone-bar div{padding:10px 4px;font-size:9px;letter-spacing:.08em}
     .command{padding:12px 0 0}
     .watch-screen{padding:calc(18px + var(--safe-top)) 14px calc(18px + var(--safe-bottom))}
-    .watch-severity{top:calc(12px + var(--safe-top));right:12px;font-size:11px}
+    .watch-face{height:min(64dvh, 520px); border-radius:26px;}
+    .watch-severity{display:none;top:calc(12px + var(--safe-top));right:12px;font-size:11px}
     .stage-reminder-wrap,
     .watch-reminder-wrap{
       right:12px;
@@ -660,7 +695,7 @@
     .profile-stack{grid-template-columns:1fr}
     .profile-preview{height:120px}
     .profile-actions{grid-template-columns:1fr}
-    .stage-event,.watch-event{max-width:min(84vw, 320px)}
+    .stage-event,.watch-event{display:none;max-width:min(84vw, 320px)}
   }
 
   @media (min-width: 761px){
@@ -818,7 +853,7 @@
             <div id="activeSummary" class="micro mono">10 MIN • SEV 5</div>
             <div id="activeEventLabel" class="active-event hidden"></div>
           </div>
-          <div id="currentZoneChip" class="status-chip">Blue</div>
+          <div id="currentZoneChip" class="status-chip signal-hidden">Blue</div>
         </div>
 
         <div class="scale-stage" id="scaleStage">
@@ -827,10 +862,17 @@
             <img id="activeReminderImage" class="stage-reminder" alt="Active reminder image" />
             <div class="stage-reminder-label">Reminder</div>
           </div>
+          <div class="reveal-field" id="revealField" aria-hidden="true"></div>
+          <div class="signal-pillars" aria-hidden="true">
+            <span style="left:25%"></span>
+            <span style="left:50%"></span>
+            <span style="left:75%"></span>
+            <span style="left:95%"></span>
+            <span style="left:calc(100% - 1px)"></span>
+          </div>
           <div class="stage-center">
-            <div id="zoneLabel" class="zone-super">BLUE</div>
             <div id="remainingReadout" class="time-super mono">10:00</div>
-            <div class="stage-sub">Remaining</div>
+            <div class="stage-sub">Presence</div>
             <div id="stageEvent" class="stage-event hidden"></div>
           </div>
           <div class="stage-meta">
@@ -918,16 +960,25 @@
 </div>
 
 <div id="watchScreen" class="watch-screen" aria-hidden="true">
-  <div class="watch-severity" id="watchSeverity">SEV 5</div>
-  <div id="watchReminderWrap" class="watch-reminder-wrap" aria-hidden="true">
-    <img id="watchReminderImage" class="watch-reminder" alt="Watch reminder image" />
-    <div class="watch-reminder-label">Reminder</div>
+  <div class="watch-face">
+    <div class="reveal-field" id="watchRevealField" aria-hidden="true"></div>
+    <div class="signal-pillars" aria-hidden="true">
+      <span style="left:25%"></span>
+      <span style="left:50%"></span>
+      <span style="left:75%"></span>
+      <span style="left:95%"></span>
+      <span style="left:calc(100% - 1px)"></span>
+    </div>
+    <div id="watchReminderWrap" class="watch-reminder-wrap" aria-hidden="true">
+      <img id="watchReminderImage" class="watch-reminder" alt="Watch reminder image" />
+      <div class="watch-reminder-label">Reminder</div>
+    </div>
+    <div class="watch-severity" id="watchSeverity">SEV 5</div>
+    <div id="watchZone" class="watch-zone">Blue</div>
+    <div id="watchTime" class="watch-time mono">10:00</div>
+    <div id="watchEvent" class="watch-event hidden"></div>
   </div>
-  <div class="watch-label">Watch Mode</div>
-  <div id="watchZone" class="watch-zone">Blue</div>
-  <div id="watchTime" class="watch-time mono">10:00</div>
-  <div id="watchEvent" class="watch-event hidden"></div>
-  <div class="watch-hint">Tap anywhere to exit</div>
+  <div class="watch-label">Tap anywhere to exit</div>
 </div>
 
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -1153,12 +1204,13 @@
     document.documentElement.style.setProperty('--zone', zone.color);
     document.documentElement.style.setProperty('--watch-bg', zone.color === '#f7cc4b' ? '#d5aa26' : zone.color);
 
-    el.zoneLabel.textContent = zone.name;
+    if (el.zoneLabel) el.zoneLabel.textContent = zone.name;
     el.currentZoneChip.textContent = zone.name;
     el.currentZoneChip.style.borderColor = `${zone.color}55`;
     el.currentZoneChip.style.boxShadow = `inset 0 0 0 1px ${zone.color}25`;
     el.watchZone.textContent = zone.name;
     el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
+    document.documentElement.style.setProperty('--reveal-width', `max(${percent}, 4px)`);
 
     if (state.currentZone !== zone.name) {
       pulseStage(zone.name);
