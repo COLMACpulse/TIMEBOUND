@@ -25,6 +25,16 @@
     --watch-bg:#111;
     --progress:0%;
     --zone:var(--blue);
+
+    --marker-width:4px;
+    --marker-cap:20px;
+    --marker-glow:28px;
+    --stage-sat:1;
+    --stage-contrast:1;
+    --stage-brightness:1;
+    --stage-floor:0.42;
+    --watch-vignette:.22;
+    --watch-bloom:.12;
   }
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -156,6 +166,37 @@
   .severity-btn .lab{font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
   .severity-btn.selected{border-color:rgba(255,255,255,.25);background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04))}
 
+  .event-panel-copy{display:grid;gap:10px}
+  .event-input{
+    width:100%;
+    padding:14px 15px;
+    border-radius:18px;
+    border:1px solid var(--line-2);
+    background:#0a0d13;
+    color:#fff;
+    outline:none;
+  }
+  .event-input::placeholder{color:#728096}
+  .event-row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:10px;
+    align-items:center;
+  }
+  .event-readout{
+    padding:12px 14px;
+    border-radius:18px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+    font-size:14px;
+    font-weight:700;
+    color:#eef2f8;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+  }
+  .event-readout.empty{color:#8f9aad;font-weight:600}
+
   .utility-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
 
   .media-well{
@@ -201,7 +242,6 @@
   }
   .media-name,.profile-name-readout{font-size:14px;font-weight:700;line-height:1.25;color:#eef2f8;word-break:break-word}
   .media-note,.profile-note{font-size:12px;line-height:1.4;color:#c4ccd8}
-  .media-empty-copy{font-size:12px;line-height:1.45;color:#c7cfdb}
 
   .profile-stack{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:start}
   .profile-preview{
@@ -224,7 +264,6 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.25);
   }
   .btn.subtle{background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03))}
-  .btn.ghost{background:rgba(255,255,255,.03)}
   .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .status-chip{
     border-radius:999px;padding:8px 10px;border:1px solid var(--line);
@@ -280,6 +319,18 @@
     align-items:center;
   }
   .active-summary{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .active-event{
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:#edf2fb;
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:100%;
+  }
+  .active-event.hidden{display:none}
 
   .scale-stage{
     position:relative;
@@ -299,6 +350,9 @@
         #ff9d42 82%,
         #ff7d55 92%,
         #ff4f5f 100%);
+    filter:saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness));
+    transform-origin:center center;
+    will-change:filter,transform;
   }
   .scale-stage::before{
     content:"";
@@ -312,7 +366,7 @@
     content:"";
     position:absolute; inset:0;
     background:
-      linear-gradient(180deg, rgba(6,7,10,.10) 0%, rgba(6,7,10,.15) 24%, rgba(6,7,10,.22) 54%, rgba(6,7,10,.42) 100%);
+      linear-gradient(180deg, rgba(6,7,10,.10) 0%, rgba(6,7,10,.15) 24%, rgba(6,7,10,.22) 54%, rgba(6,7,10,var(--stage-floor)) 100%);
     pointer-events:none;
     z-index:1;
   }
@@ -365,9 +419,28 @@
   .stage-sub{font-size:12px;letter-spacing:.20em;text-transform:uppercase;color:rgba(255,255,255,.84)}
   .zone-super{font-size:clamp(28px, 6vw, 58px);line-height:.95;font-weight:900;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.22)}
   .time-super{font-size:clamp(42px, 11vw, 116px);line-height:.92;font-weight:900;margin:10px 0 8px;text-shadow:0 10px 28px rgba(0,0,0,.20)}
+  .stage-event{
+    margin-top:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(7,10,15,.20);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#fff;
+    font-weight:900;
+    max-width:min(72vw, 520px);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .stage-event.hidden{display:none}
   .stage-meta{
     position:absolute; left:16px; right:16px; bottom:16px; z-index:3;
-    display:grid; grid-template-columns:1.15fr .75fr .75fr; gap:10px;
+    display:grid; grid-template-columns:1.2fr 1fr .75fr .75fr; gap:10px;
   }
   .meta-pill{
     min-height:74px; border-radius:22px; border:1px solid rgba(255,255,255,.12);
@@ -377,17 +450,50 @@
   }
   .meta-pill.compact{align-items:center;text-align:center}
   .meta-pill .big{font-size:22px;font-weight:900;letter-spacing:.04em;color:#fff}
+  .meta-pill.event-pill .big{
+    font-size:14px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .meta-pill.event-pill.hidden{display:none}
   .marker-rail{
-    position:absolute; z-index:4; top:18px; bottom:18px; left:var(--progress);
-    width:2px; transform:translateX(-1px);
+    position:absolute;
+    z-index:4;
+    top:18px;
+    bottom:18px;
+    left:var(--progress);
+    width:var(--marker-width);
+    transform:translateX(calc(var(--marker-width) / -2));
+    will-change:left,transform;
   }
   .marker-rail::before{
-    content:""; position:absolute; top:0; bottom:0; left:-2px; width:4px; border-radius:999px;
-    background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.18), 0 0 18px rgba(255,255,255,.58), 0 0 42px rgba(255,255,255,.35);
+    content:"";
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    width:100%;
+    border-radius:999px;
+    background:#fff;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.18),
+      0 0 var(--marker-glow) rgba(255,255,255,.58),
+      0 0 calc(var(--marker-glow) * 1.5) rgba(255,255,255,.35);
   }
   .marker-rail::after{
-    content:""; position:absolute; top:-2px; left:-11px; width:22px; height:22px; border-radius:50%;
-    background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.22), 0 0 28px rgba(255,255,255,.56);
+    content:"";
+    position:absolute;
+    top:-2px;
+    left:50%;
+    transform:translateX(-50%);
+    width:var(--marker-cap);
+    height:var(--marker-cap);
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 2px 12px rgba(0,0,0,.22), 0 0 calc(var(--marker-glow) * 0.95) rgba(255,255,255,.56);
   }
   .zone-bar{
     display:grid; grid-template-columns:25fr 25fr 25fr 20fr 5fr;
@@ -410,6 +516,15 @@
   }
   .expired-title{font-size:clamp(26px, 7vw, 34px);font-weight:900;letter-spacing:.08em;margin:0 0 6px}
   .expired-sub{margin:0;color:#cdd4df;font-size:14px}
+  .expired-event{
+    margin-top:10px;
+    font-size:11px;
+    letter-spacing:.20em;
+    text-transform:uppercase;
+    color:#edf2fb;
+    font-weight:900;
+  }
+  .expired-event.hidden{display:none}
 
   .resolve-options{display:grid;gap:10px}
   .resolve-btn{
@@ -433,19 +548,39 @@
     padding:calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
     background:var(--watch-bg); color:#fff; z-index:40; text-align:center;
     overflow:hidden;
+    filter:saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness));
+    transition:background .18s ease-out, filter .18s ease-out;
   }
   .watch-screen.active{display:flex}
   .watch-screen::before{
     content:""; position:absolute; inset:0;
     background:
-      radial-gradient(900px 320px at 50% 0%, rgba(255,255,255,.12), transparent 40%),
-      radial-gradient(900px 320px at 50% 100%, rgba(0,0,0,.22), transparent 45%);
+      radial-gradient(900px 320px at 50% 0%, rgba(255,255,255,var(--watch-bloom)), transparent 40%),
+      radial-gradient(900px 320px at 50% 100%, rgba(0,0,0,var(--watch-vignette)), transparent 45%);
     pointer-events:none;
     z-index:0;
   }
   .watch-label{position:relative;z-index:2;font-size:clamp(12px, 3vw, 15px);letter-spacing:.24em;text-transform:uppercase;opacity:.92;margin-bottom:10px}
   .watch-zone{position:relative;z-index:2;font-size:clamp(28px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18);word-break:break-word;max-width:100%}
   .watch-time{position:relative;z-index:2;font-size:clamp(42px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums;max-width:100%}
+  .watch-event{
+    position:relative;
+    z-index:2;
+    margin:6px 0 12px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(7,10,15,.16);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-weight:900;
+    max-width:min(78vw, 520px);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .watch-event.hidden{display:none}
   .watch-hint{position:relative;z-index:2;font-size:clamp(11px, 3vw, 12px);letter-spacing:.2em;text-transform:uppercase;opacity:.88}
   .watch-severity{position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9;z-index:2}
 
@@ -479,6 +614,7 @@
     .meta-pill .big{font-size:18px}
     .btn-row{grid-template-columns:1fr}
     .identity-hud{top:calc(10px + var(--safe-top));right:10px;max-width:min(240px, calc(100vw - 20px))}
+    .event-row{grid-template-columns:1fr}
   }
 
   @media (max-width: 520px){
@@ -499,8 +635,7 @@
     .time-super{font-size:clamp(38px, 16vw, 72px)}
     .stage-sub{font-size:11px;letter-spacing:.18em}
     .marker-rail{top:12px;bottom:12px}
-    .marker-rail::before{width:3px;left:-1.5px}
-    .marker-rail::after{left:-9px;width:18px;height:18px}
+    .marker-rail::after{width:calc(var(--marker-cap) * .88);height:calc(var(--marker-cap) * .88)}
     .zone-bar div{padding:10px 4px;font-size:9px;letter-spacing:.08em}
     .command{padding:12px 0 0}
     .watch-screen{padding:calc(18px + var(--safe-top)) 14px calc(18px + var(--safe-bottom))}
@@ -525,6 +660,7 @@
     .profile-stack{grid-template-columns:1fr}
     .profile-preview{height:120px}
     .profile-actions{grid-template-columns:1fr}
+    .stage-event,.watch-event{max-width:min(84vw, 320px)}
   }
 
   @media (min-width: 761px){
@@ -535,6 +671,7 @@
         "hero hero"
         "preset custom"
         "severity severity"
+        "event event"
         "utility utility"
         "command command";
       align-content:start;
@@ -544,6 +681,7 @@
     #readyPresetPanel{grid-area:preset}
     #readyCustomPanel{grid-area:custom}
     #readySeverityPanel{grid-area:severity}
+    #readyEventPanel{grid-area:event}
     #readyUtilityPanel{grid-area:utility}
     #screen-ready .command{grid-area:command;padding:0}
     .scale-stage{min-height:clamp(460px, 66dvh, 840px)}
@@ -573,7 +711,7 @@
             <div class="title">TIMEBOUND</div>
             <p class="subtitle">Set a bounded window. Track pressure through color. No coaching. No noise. Just time moving toward the edge.</p>
           </div>
-          <div class="seal">v2<br>field</div>
+          <div class="seal">v3<br>signal</div>
         </div>
       </div>
 
@@ -610,6 +748,17 @@
           <button class="severity-btn" data-severity="3"><div class="num">3</div><div class="lab">Medium</div></button>
           <button class="severity-btn" data-severity="4"><div class="num">4</div><div class="lab">High</div></button>
           <button class="severity-btn selected" data-severity="5"><div class="num">5</div><div class="lab">Hard</div></button>
+        </div>
+      </div>
+
+      <div id="readyEventPanel" class="panel card">
+        <p class="section-title">Event Tag</p>
+        <div class="event-panel-copy">
+          <div class="event-row">
+            <input id="eventInput" class="event-input" type="text" maxlength="52" placeholder="Name the window — task, mission, event, or short phrase" />
+            <div id="eventReadout" class="event-readout empty">No event tag set</div>
+          </div>
+          <div class="micro">Optional session label. Shows during ACTIVE and WATCH MODE, and is stored with the resolve log.</div>
         </div>
       </div>
 
@@ -667,6 +816,7 @@
           <div class="active-summary">
             <div class="tiny">Active Session</div>
             <div id="activeSummary" class="micro mono">10 MIN • SEV 5</div>
+            <div id="activeEventLabel" class="active-event hidden"></div>
           </div>
           <div id="currentZoneChip" class="status-chip">Blue</div>
         </div>
@@ -681,8 +831,13 @@
             <div id="zoneLabel" class="zone-super">BLUE</div>
             <div id="remainingReadout" class="time-super mono">10:00</div>
             <div class="stage-sub">Remaining</div>
+            <div id="stageEvent" class="stage-event hidden"></div>
           </div>
           <div class="stage-meta">
+            <div id="metaEventPill" class="meta-pill event-pill hidden">
+              <div class="tiny">Event</div>
+              <div id="metaEvent" class="big">—</div>
+            </div>
             <div class="meta-pill">
               <div class="tiny">Instrument State</div>
               <div class="big mono" id="metaProgress">0.0%</div>
@@ -721,6 +876,7 @@
         <div class="expired-ring">Expired</div>
         <h2 class="expired-title">SESSION COMPLETE</h2>
         <p id="expiredSummary" class="expired-sub mono">10 MIN • SEV 5</p>
+        <div id="expiredEvent" class="expired-event hidden"></div>
       </div>
       <div class="command">
         <button id="resolveBtn" class="btn primary">Resolve</button>
@@ -770,6 +926,7 @@
   <div class="watch-label">Watch Mode</div>
   <div id="watchZone" class="watch-zone">Blue</div>
   <div id="watchTime" class="watch-time mono">10:00</div>
+  <div id="watchEvent" class="watch-event hidden"></div>
   <div class="watch-hint">Tap anywhere to exit</div>
 </div>
 
@@ -790,6 +947,7 @@
     durationMin: 10,
     durationMs: 10 * 60 * 1000,
     severity: 5,
+    eventTag: '',
     startTime: null,
     raf: null,
     currentZone: 'BLUE',
@@ -814,8 +972,14 @@
     durationReadout: document.getElementById('durationReadout'),
     durationChip: document.getElementById('durationChip'),
     severityBtns: [...document.querySelectorAll('.severity-btn')],
+    eventInput: document.getElementById('eventInput'),
+    eventReadout: document.getElementById('eventReadout'),
     startBtn: document.getElementById('startBtn'),
     activeSummary: document.getElementById('activeSummary'),
+    activeEventLabel: document.getElementById('activeEventLabel'),
+    stageEvent: document.getElementById('stageEvent'),
+    metaEventPill: document.getElementById('metaEventPill'),
+    metaEvent: document.getElementById('metaEvent'),
     currentZoneChip: document.getElementById('currentZoneChip'),
     zoneLabel: document.getElementById('zoneLabel'),
     remainingReadout: document.getElementById('remainingReadout'),
@@ -825,6 +989,7 @@
     watchBtn: document.getElementById('watchBtn'),
     abortBtn: document.getElementById('abortBtn'),
     expiredSummary: document.getElementById('expiredSummary'),
+    expiredEvent: document.getElementById('expiredEvent'),
     resolveBtn: document.getElementById('resolveBtn'),
     newSessionBtn: document.getElementById('newSessionBtn'),
     resolveOptions: [...document.querySelectorAll('.resolve-btn')],
@@ -835,6 +1000,7 @@
     watchZone: document.getElementById('watchZone'),
     watchTime: document.getElementById('watchTime'),
     watchSeverity: document.getElementById('watchSeverity'),
+    watchEvent: document.getElementById('watchEvent'),
     toast: document.getElementById('toast'),
     reminderUploadBtn: document.getElementById('reminderUploadBtn'),
     reminderCameraBtn: document.getElementById('reminderCameraBtn'),
@@ -858,7 +1024,8 @@
     identityHudImage: document.getElementById('identityHudImage'),
     identityHudFallback: document.getElementById('identityHudFallback'),
     identityHudName: document.getElementById('identityHudName'),
-    identityHudSub: document.getElementById('identityHudSub')
+    identityHudSub: document.getElementById('identityHudSub'),
+    scaleStage: document.getElementById('scaleStage')
   };
 
   function setScreen(name){
@@ -886,6 +1053,10 @@
     return ZONES.find(z => progress >= z.min && progress < z.max) || ZONES[ZONES.length - 1];
   }
 
+  function getEventLabel(){
+    return (state.eventTag || '').trim();
+  }
+
   function syncDurationUI(){
     state.durationMs = state.durationMin * 60 * 1000;
     el.durationSlider.value = state.durationMin;
@@ -896,6 +1067,40 @@
 
   function syncSeverityUI(){
     el.severityBtns.forEach(btn => btn.classList.toggle('selected', Number(btn.dataset.severity) === state.severity));
+    applySeverityExpression();
+    syncActiveStaticUI();
+  }
+
+  function syncEventUI(){
+    const label = getEventLabel();
+    el.eventInput.value = state.eventTag;
+    if (label) {
+      el.eventReadout.textContent = label;
+      el.eventReadout.classList.remove('empty');
+      el.activeEventLabel.textContent = label;
+      el.activeEventLabel.classList.remove('hidden');
+      el.stageEvent.textContent = label;
+      el.stageEvent.classList.remove('hidden');
+      el.metaEvent.textContent = label;
+      el.metaEventPill.classList.remove('hidden');
+      el.watchEvent.textContent = label;
+      el.watchEvent.classList.remove('hidden');
+      el.expiredEvent.textContent = label;
+      el.expiredEvent.classList.remove('hidden');
+    } else {
+      el.eventReadout.textContent = 'No event tag set';
+      el.eventReadout.classList.add('empty');
+      el.activeEventLabel.textContent = '';
+      el.activeEventLabel.classList.add('hidden');
+      el.stageEvent.textContent = '';
+      el.stageEvent.classList.add('hidden');
+      el.metaEvent.textContent = '—';
+      el.metaEventPill.classList.add('hidden');
+      el.watchEvent.textContent = '';
+      el.watchEvent.classList.add('hidden');
+      el.expiredEvent.textContent = '';
+      el.expiredEvent.classList.add('hidden');
+    }
   }
 
   function syncActiveStaticUI(){
@@ -905,6 +1110,39 @@
     el.metaSeverity.textContent = state.severity;
     el.expiredSummary.textContent = summary;
     el.watchSeverity.textContent = `SEV ${state.severity}`;
+    syncEventUI();
+  }
+
+  function applySeverityExpression(){
+    const s = state.severity;
+    const root = document.documentElement.style;
+    root.setProperty('--marker-width', `${2 + s}px`);
+    root.setProperty('--marker-cap', `${14 + s * 2}px`);
+    root.setProperty('--marker-glow', `${18 + s * 8}px`);
+    root.setProperty('--stage-sat', (0.92 + s * 0.06).toFixed(2));
+    root.setProperty('--stage-contrast', (0.96 + s * 0.045).toFixed(2));
+    root.setProperty('--stage-brightness', (0.96 + s * 0.018).toFixed(2));
+    root.setProperty('--stage-floor', (0.34 + s * 0.03).toFixed(2));
+    root.setProperty('--watch-vignette', (0.12 + s * 0.03).toFixed(2));
+    root.setProperty('--watch-bloom', (0.07 + s * 0.018).toFixed(2));
+  }
+
+  function pulseStage(zoneName){
+    const s = state.severity;
+    const isRed = zoneName === 'RED';
+    const scale = isRed ? (1.012 + s * 0.0034) : (1.002 + s * 0.0022);
+    const bright = isRed ? (1.14 + s * 0.03) : (1.03 + s * 0.018);
+    const sat = isRed ? (1.08 + s * 0.04) : (1.01 + s * 0.018);
+
+    if (!el.scaleStage.animate) return;
+    el.scaleStage.animate([
+      { transform: 'scale(1)', filter: `saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` },
+      { transform: `scale(${scale.toFixed(4)})`, filter: `saturate(${sat.toFixed(3)}) contrast(${(1 + s * 0.025).toFixed(3)}) brightness(${bright.toFixed(3)})` },
+      { transform: 'scale(1)', filter: `saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` }
+    ], {
+      duration: isRed ? 440 : 300,
+      easing: 'ease-out'
+    });
   }
 
   function updateVisuals(progress){
@@ -923,6 +1161,7 @@
     el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
 
     if (state.currentZone !== zone.name) {
+      pulseStage(zone.name);
       handleZoneAudio(state.currentZone, zone.name);
       state.currentZone = zone.name;
     }
@@ -996,11 +1235,13 @@
 
   function handleZoneAudio(prev, next){
     if (!state.audioCtx) return;
-    const baseVol = 0.018 + (state.severity * 0.008);
+    const baseVol = 0.016 + (state.severity * 0.0075);
+
     if (next === 'RED') {
-      for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.72, 'sine', i * 0.13);
+      for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.76, 'sine', i * 0.13);
       return;
     }
+
     if (next === 'EXPIRED') return;
     ping(780, 0.07, baseVol * 0.8, 'sine', 0);
   }
@@ -1173,11 +1414,13 @@
   function startSession(){
     prepareAudio();
     safeResumeAudio();
+    state.eventTag = el.eventInput.value.trim();
     state.startTime = Date.now();
     state.currentZone = 'BLUE';
     state.outcome = null;
     el.resolveNote.value = '';
     el.resolveOptions.forEach(btn => btn.classList.remove('active'));
+    applySeverityExpression();
     syncActiveStaticUI();
     renderReminderState();
     renderProfileState();
@@ -1204,6 +1447,7 @@
 
   function enterWatchMode(){
     renderReminderState();
+    syncEventUI();
     el.watchScreen.classList.add('active');
     el.watchScreen.setAttribute('aria-hidden', 'false');
   }
@@ -1219,6 +1463,7 @@
       timestamp: new Date().toISOString(),
       duration_min: state.durationMin,
       severity: state.severity,
+      event_tag: getEventLabel(),
       outcome: state.outcome || 'unmarked',
       note: el.resolveNote.value.trim()
     };
@@ -1250,6 +1495,11 @@
     state.severity = Number(btn.dataset.severity);
     syncSeverityUI();
   }));
+
+  el.eventInput.addEventListener('input', () => {
+    state.eventTag = el.eventInput.value.trim();
+    syncEventUI();
+  });
 
   el.startBtn.addEventListener('click', startSession);
   el.watchBtn.addEventListener('click', () => { safeResumeAudio(); enterWatchMode(); });
@@ -1289,11 +1539,13 @@
     if (document.hidden && el.watchScreen.classList.contains('active')) exitWatchMode(false);
   });
 
+  applySeverityExpression();
   syncDurationUI();
   syncSeverityUI();
   syncActiveStaticUI();
   loadReminderState();
   loadProfileState();
+  syncEventUI();
 })();
 </script>
 </body>
