@@ -24,17 +24,14 @@
     --safe-bottom:env(safe-area-inset-bottom,0px);
     --watch-bg:#111;
     --progress:0%;
-    --zone:var(--blue);
-
-    --marker-width:4px;
-    --marker-cap:20px;
-    --marker-glow:28px;
     --stage-sat:1;
     --stage-contrast:1;
     --stage-brightness:1;
-    --stage-floor:0.42;
+    --stage-floor:.42;
     --watch-vignette:.22;
     --watch-bloom:.12;
+    --reveal-shadow:rgba(0,0,0,.92);
+    --reveal-edge:rgba(255,255,255,.06);
   }
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -242,6 +239,7 @@
   }
   .media-name,.profile-name-readout{font-size:14px;font-weight:700;line-height:1.25;color:#eef2f8;word-break:break-word}
   .media-note,.profile-note{font-size:12px;line-height:1.4;color:#c4ccd8}
+  .media-empty-copy{font-size:12px;line-height:1.45;color:#c7cfdb}
 
   .profile-stack{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:start}
   .profile-preview{
@@ -264,6 +262,7 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.25);
   }
   .btn.subtle{background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03))}
+  .btn.ghost{background:rgba(255,255,255,.03)}
   .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .status-chip{
     border-radius:999px;padding:8px 10px;border:1px solid var(--line);
@@ -331,7 +330,6 @@
     max-width:100%;
   }
   .active-event.hidden{display:none}
-  .signal-hidden{display:none !important}
 
   .scale-stage{
     position:relative;
@@ -340,68 +338,77 @@
     overflow:hidden;
     border:1px solid rgba(255,255,255,.12);
     box-shadow:var(--shadow);
-    background:linear-gradient(90deg,
-      rgba(47,143,255,var(--ghost-alpha)) 0%,
-      rgba(91,142,255,var(--ghost-alpha)) 12%,
-      rgba(154,124,255,var(--ghost-alpha)) 28%,
-      rgba(204,131,255,var(--ghost-alpha)) 40%,
-      rgba(247,204,75,var(--ghost-alpha)) 55%,
-      rgba(255,191,77,var(--ghost-alpha)) 68%,
-      rgba(255,157,66,var(--ghost-alpha)) 82%,
-      rgba(255,125,85,var(--ghost-alpha)) 92%,
-      rgba(255,79,95,var(--ghost-alpha)) 100%);
+    background:#07090d;
     filter:saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness));
     transform-origin:center center;
     will-change:filter,transform;
   }
+  .ghost-field,
+  .reveal-field{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg,
+        #2f8fff 0%,
+        #5b8eff 12%,
+        #9a7cff 28%,
+        #cc83ff 40%,
+        #f7cc4b 55%,
+        #ffbf4d 68%,
+        #ff9d42 82%,
+        #ff7d55 92%,
+        #ff4f5f 100%);
+  }
+  .ghost-field{
+    opacity:.11;
+    z-index:0;
+  }
+  .reveal-field{
+    width:var(--progress);
+    min-width:2px;
+    z-index:1;
+    box-shadow:12px 0 34px rgba(255,255,255,.04);
+  }
   .scale-stage::before{
     content:"";
     position:absolute; inset:0;
+    z-index:2;
     background:
-      radial-gradient(120% 85% at 50% 0%, rgba(255,255,255,.12), transparent 34%),
-      linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02) 18%, rgba(0,0,0,.07) 62%, rgba(0,0,0,.18) 100%);
+      radial-gradient(120% 85% at 50% 0%, rgba(255,255,255,.16), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03) 18%, rgba(0,0,0,.05) 62%, rgba(0,0,0,.18) 100%);
     pointer-events:none;
   }
   .scale-stage::after{
     content:"";
     position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(6,7,10,.06) 0%, rgba(6,7,10,.10) 24%, rgba(6,7,10,.14) 54%, rgba(6,7,10,var(--stage-floor)) 100%);
+    z-index:3;
+    background:
+      linear-gradient(180deg, rgba(6,7,10,.10) 0%, rgba(6,7,10,.12) 24%, rgba(6,7,10,.18) 54%, rgba(6,7,10,var(--stage-floor)) 100%);
     pointer-events:none;
-    z-index:1;
   }
-  .reveal-field{
+
+  .pillar-layer{
     position:absolute;
-    inset:0 auto 0 0;
-    width:var(--reveal-width);
-    min-width:4px;
-    background:linear-gradient(90deg,
-      #2f8fff 0%,
-      #5b8eff 12%,
-      #9a7cff 28%,
-      #cc83ff 40%,
-      #f7cc4b 55%,
-      #ffbf4d 68%,
-      #ff9d42 82%,
-      #ff7d55 92%,
-      #ff4f5f 100%);
-    z-index:0;
+    inset:16px 14px;
+    z-index:4;
+    pointer-events:none;
   }
-  .reveal-field::after{
-    content:"";
+  .pillar{
     position:absolute;
-    top:0; bottom:0; right:0;
+    top:0;
+    bottom:0;
     width:2px;
-    background:rgba(255,255,255,.55);
-    box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 12px rgba(255,255,255,.24);
+    background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.08));
+    border-radius:999px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.08);
+    opacity:.42;
   }
-  .signal-pillars{
-    position:absolute; inset:0; z-index:2; pointer-events:none;
-  }
-  .signal-pillars span{
-    position:absolute; top:10px; bottom:10px; width:1px;
-    background:rgba(255,255,255,var(--pillar-alpha));
-    box-shadow:0 0 0 1px rgba(255,255,255,.02);
-  }
+  .pillar.p25{left:25%}
+  .pillar.p50{left:50%}
+  .pillar.p75{left:75%}
+  .pillar.p95{left:95%}
+  .pillar.p100{right:0}
+
   .stage-reminder-wrap,
   .watch-reminder-wrap{
     position:absolute;
@@ -414,7 +421,7 @@
     border:1px solid rgba(255,255,255,.16);
     box-shadow:0 18px 50px rgba(0,0,0,.34);
     background:rgba(4,6,10,.24);
-    z-index:2;
+    z-index:5;
     display:none;
   }
   .stage-reminder-wrap::before,
@@ -439,18 +446,24 @@
 
   .stage-center{
     position:relative;
-    z-index:3;
+    z-index:6;
     height:100%;
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:26px 20px 156px;
+    justify-content:flex-start;
+    align-items:flex-start;
+    text-align:left;
+    padding:22px 20px 156px;
   }
   .stage-sub{font-size:12px;letter-spacing:.20em;text-transform:uppercase;color:rgba(255,255,255,.84)}
-  .zone-super{font-size:clamp(28px, 6vw, 58px);line-height:.95;font-weight:900;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.22)}
-  .time-super{font-size:clamp(42px, 11vw, 116px);line-height:.92;font-weight:900;margin:10px 0 8px;text-shadow:0 10px 28px rgba(0,0,0,.20)}
+  .stage-presence{
+    margin-top:6px;
+    font-size:clamp(12px, 2.4vw, 15px);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.80);
+    font-weight:900;
+  }
   .stage-event{
     margin-top:8px;
     padding:8px 12px;
@@ -470,8 +483,9 @@
     text-overflow:ellipsis;
   }
   .stage-event.hidden{display:none}
+
   .stage-meta{
-    position:absolute; left:16px; right:16px; bottom:16px; z-index:3;
+    position:absolute; left:16px; right:16px; bottom:16px; z-index:6;
     display:grid; grid-template-columns:1.2fr 1fr .75fr .75fr; gap:10px;
   }
   .meta-pill{
@@ -491,42 +505,7 @@
     text-overflow:ellipsis;
   }
   .meta-pill.event-pill.hidden{display:none}
-  .marker-rail{
-    position:absolute;
-    z-index:4;
-    top:18px;
-    bottom:18px;
-    left:var(--progress);
-    width:var(--marker-width);
-    transform:translateX(calc(var(--marker-width) / -2));
-    will-change:left,transform;
-  }
-  .marker-rail::before{
-    content:"";
-    position:absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    width:100%;
-    border-radius:999px;
-    background:#fff;
-    box-shadow:
-      0 0 0 1px rgba(0,0,0,.18),
-      0 0 var(--marker-glow) rgba(255,255,255,.58),
-      0 0 calc(var(--marker-glow) * 1.5) rgba(255,255,255,.35);
-  }
-  .marker-rail::after{
-    content:"";
-    position:absolute;
-    top:-2px;
-    left:50%;
-    transform:translateX(-50%);
-    width:var(--marker-cap);
-    height:var(--marker-cap);
-    border-radius:50%;
-    background:#fff;
-    box-shadow:0 2px 12px rgba(0,0,0,.22), 0 0 calc(var(--marker-glow) * 0.95) rgba(255,255,255,.56);
-  }
+
   .zone-bar{
     display:grid; grid-template-columns:25fr 25fr 25fr 20fr 5fr;
     overflow:hidden; border-radius:18px; border:1px solid var(--line);
@@ -576,16 +555,14 @@
   textarea::placeholder{color:#728096}
 
   .watch-screen{
-    position:fixed; inset:0; display:none; flex-direction:column; justify-content:center; align-items:center;
-    padding:calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
-    background:var(--watch-bg); color:#fff; z-index:40; text-align:center;
+    position:fixed; inset:0; display:none; flex-direction:column; justify-content:flex-start; align-items:stretch;
+    padding:calc(14px + var(--safe-top)) 14px calc(14px + var(--safe-bottom));
+    background:var(--watch-bg); color:#fff; z-index:40;
     overflow:hidden;
     filter:saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness));
     transition:background .18s ease-out, filter .18s ease-out;
   }
   .watch-screen.active{display:flex}
-  .watch-face{position:relative; width:min(100%, 860px); height:min(72dvh, 760px); border-radius:34px; overflow:hidden; border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); background:linear-gradient(90deg, rgba(47,143,255,var(--ghost-alpha)) 0%, rgba(91,142,255,var(--ghost-alpha)) 12%, rgba(154,124,255,var(--ghost-alpha)) 28%, rgba(204,131,255,var(--ghost-alpha)) 40%, rgba(247,204,75,var(--ghost-alpha)) 55%, rgba(255,191,77,var(--ghost-alpha)) 68%, rgba(255,157,66,var(--ghost-alpha)) 82%, rgba(255,125,85,var(--ghost-alpha)) 92%, rgba(255,79,95,var(--ghost-alpha)) 100%);}
-  .watch-face::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(6,7,10,.06) 0%, rgba(6,7,10,.10) 24%, rgba(6,7,10,.14) 54%, rgba(6,7,10,var(--stage-floor)) 100%);z-index:1;pointer-events:none;}
   .watch-screen::before{
     content:""; position:absolute; inset:0;
     background:
@@ -594,29 +571,116 @@
     pointer-events:none;
     z-index:0;
   }
-  .watch-label{position:relative;z-index:2;font-size:clamp(11px, 3vw, 12px);letter-spacing:.24em;text-transform:uppercase;opacity:.72;margin-top:14px}
-  .watch-zone{display:none;position:relative;z-index:2;font-size:clamp(28px,9vw,68px);line-height:.94;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.18);word-break:break-word;max-width:100%}
-  .watch-time{display:none;position:relative;z-index:2;font-size:clamp(42px,18vw,128px);line-height:.95;font-weight:900;margin:14px 0 10px; font-variant-numeric:tabular-nums;max-width:100%}
-  .watch-event{display:none;
+  .watch-reveal{
     position:relative;
+    flex:1;
+    min-height:0;
+    border-radius:28px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:var(--shadow);
+    background:#07090d;
+  }
+  .watch-ghost-field,
+  .watch-reveal-field{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg,
+        #2f8fff 0%,
+        #5b8eff 12%,
+        #9a7cff 28%,
+        #cc83ff 40%,
+        #f7cc4b 55%,
+        #ffbf4d 68%,
+        #ff9d42 82%,
+        #ff7d55 92%,
+        #ff4f5f 100%);
+  }
+  .watch-ghost-field{opacity:.10;z-index:0}
+  .watch-reveal-field{width:var(--progress);min-width:2px;z-index:1}
+  .watch-reveal::before{
+    content:"";
+    position:absolute; inset:0;
     z-index:2;
-    margin:6px 0 12px;
-    padding:8px 12px;
+    background:
+      radial-gradient(120% 85% at 50% 0%, rgba(255,255,255,.14), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02) 18%, rgba(0,0,0,.06) 62%, rgba(0,0,0,.24) 100%);
+    pointer-events:none;
+  }
+  .watch-reveal::after{
+    content:"";
+    position:absolute; inset:0;
+    z-index:3;
+    background:
+      linear-gradient(180deg, rgba(6,7,10,.08) 0%, rgba(6,7,10,.10) 24%, rgba(6,7,10,.16) 54%, rgba(6,7,10,.34) 100%);
+    pointer-events:none;
+  }
+  .watch-pillar-layer{
+    position:absolute;
+    inset:14px 12px;
+    z-index:4;
+    pointer-events:none;
+  }
+  .watch-pillar{
+    position:absolute;
+    top:0; bottom:0; width:2px;
+    background:linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.07));
+    border-radius:999px;
+    opacity:.40;
+  }
+  .watch-pillar.p25{left:25%}
+  .watch-pillar.p50{left:50%}
+  .watch-pillar.p75{left:75%}
+  .watch-pillar.p95{left:95%}
+  .watch-pillar.p100{right:0}
+
+  .watch-hud{
+    position:relative;
+    z-index:5;
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .watch-label{
+    font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.92;
+  }
+  .watch-event{
+    margin-top:8px;
+    padding:7px 10px;
     border-radius:999px;
     border:1px solid rgba(255,255,255,.16);
     background:rgba(7,10,15,.16);
-    font-size:11px;
+    font-size:10px;
     letter-spacing:.18em;
     text-transform:uppercase;
     font-weight:900;
-    max-width:min(78vw, 520px);
+    max-width:min(70vw, 360px);
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
   .watch-event.hidden{display:none}
-  .watch-hint{position:relative;z-index:2;font-size:clamp(11px, 3vw, 12px);letter-spacing:.2em;text-transform:uppercase;opacity:.88}
-  .watch-severity{display:none;position:absolute;top:calc(16px + var(--safe-top));right:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.9;z-index:2}
+  .watch-severity{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.9}
+  .watch-hint{
+    position:absolute;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    z-index:5;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    opacity:.82;
+    background:rgba(7,10,15,.16);
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.10);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
 
   .toast{
     position:fixed;left:50%;bottom:calc(18px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);
@@ -642,7 +706,7 @@
     .severity-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
     .severity-btn{min-height:64px;border-radius:18px}
     .severity-btn .num{font-size:20px}
-    .stage-center{padding:22px 18px 146px}
+    .stage-center{padding:18px 16px 146px}
     .stage-meta{grid-template-columns:1fr;gap:8px}
     .meta-pill,.meta-pill.compact{align-items:flex-start;text-align:left}
     .meta-pill .big{font-size:18px}
@@ -664,17 +728,11 @@
     .severity-btn .lab{font-size:9px;letter-spacing:.08em}
     .active-top{grid-template-columns:1fr;align-items:flex-start}
     .scale-stage{min-height:clamp(360px, 64dvh, 560px);border-radius:28px}
-    .stage-center{padding:20px 16px 170px}
-    .zone-super{font-size:clamp(22px, 8vw, 38px);letter-spacing:.14em}
-    .time-super{font-size:clamp(38px, 16vw, 72px)}
-    .stage-sub{font-size:11px;letter-spacing:.18em}
-    .marker-rail{top:12px;bottom:12px}
-    .marker-rail::after{width:calc(var(--marker-cap) * .88);height:calc(var(--marker-cap) * .88)}
+    .stage-center{padding:16px 14px 170px}
+    .stage-presence{font-size:11px;letter-spacing:.18em}
     .zone-bar div{padding:10px 4px;font-size:9px;letter-spacing:.08em}
     .command{padding:12px 0 0}
-    .watch-screen{padding:calc(18px + var(--safe-top)) 14px calc(18px + var(--safe-bottom))}
-    .watch-face{height:min(64dvh, 520px); border-radius:26px;}
-    .watch-severity{display:none;top:calc(12px + var(--safe-top));right:12px;font-size:11px}
+    .watch-screen{padding:calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom))}
     .stage-reminder-wrap,
     .watch-reminder-wrap{
       right:12px;
@@ -695,7 +753,8 @@
     .profile-stack{grid-template-columns:1fr}
     .profile-preview{height:120px}
     .profile-actions{grid-template-columns:1fr}
-    .stage-event,.watch-event{display:none;max-width:min(84vw, 320px)}
+    .stage-event,.watch-event{max-width:min(84vw, 320px)}
+    .watch-reveal{border-radius:24px}
   }
 
   @media (min-width: 761px){
@@ -746,7 +805,7 @@
             <div class="title">TIMEBOUND</div>
             <p class="subtitle">Set a bounded window. Track pressure through color. No coaching. No noise. Just time moving toward the edge.</p>
           </div>
-          <div class="seal">v3<br>signal</div>
+          <div class="seal">v4<br>reveal</div>
         </div>
       </div>
 
@@ -789,11 +848,12 @@
       <div id="readyEventPanel" class="panel card">
         <p class="section-title">Event Tag</p>
         <div class="event-panel-copy">
+          <input id="eventInput" class="event-input" type="text" maxlength="48" placeholder="Name the event / window / task" />
           <div class="event-row">
-            <input id="eventInput" class="event-input" type="text" maxlength="52" placeholder="Name the window — task, mission, event, or short phrase" />
             <div id="eventReadout" class="event-readout empty">No event tag set</div>
+            <button id="eventClearBtn" class="media-btn">Clear Tag</button>
           </div>
-          <div class="micro">Optional session label. Shows during ACTIVE and WATCH MODE, and is stored with the resolve log.</div>
+          <div class="micro">Local-only event naming. Shows during ACTIVE, WATCH MODE, EXPIRED, and in saved outcomes.</div>
         </div>
       </div>
 
@@ -825,7 +885,7 @@
                 <div class="media-overlay"></div>
               </div>
               <div>
-                <div class="profile-name-readout" id="profileNameReadout">TIMEBOUND</div>
+                <div id="profileNameReadout" class="profile-name-readout">TIMEBOUND</div>
                 <div class="profile-note">Top-right constant marker. Can be a name, short words, or a picture. Stays local until the user changes it.</div>
                 <input id="profileTextInput" class="profile-input" type="text" maxlength="28" placeholder="Name / call sign / short phrase" />
                 <div class="profile-actions">
@@ -851,37 +911,41 @@
           <div class="active-summary">
             <div class="tiny">Active Session</div>
             <div id="activeSummary" class="micro mono">10 MIN • SEV 5</div>
-            <div id="activeEventLabel" class="active-event hidden"></div>
+            <div id="activeEvent" class="active-event hidden"></div>
           </div>
-          <div id="currentZoneChip" class="status-chip signal-hidden">Blue</div>
+          <div id="currentZoneChip" class="status-chip">ACTIVE</div>
         </div>
 
         <div class="scale-stage" id="scaleStage">
-          <div class="marker-rail" id="marker"></div>
+          <div class="ghost-field"></div>
+          <div class="reveal-field" id="revealField"></div>
+
+          <div class="pillar-layer" aria-hidden="true">
+            <div class="pillar p25"></div>
+            <div class="pillar p50"></div>
+            <div class="pillar p75"></div>
+            <div class="pillar p95"></div>
+            <div class="pillar p100"></div>
+          </div>
+
           <div id="activeReminderWrap" class="stage-reminder-wrap" aria-hidden="true">
             <img id="activeReminderImage" class="stage-reminder" alt="Active reminder image" />
             <div class="stage-reminder-label">Reminder</div>
           </div>
-          <div class="reveal-field" id="revealField" aria-hidden="true"></div>
-          <div class="signal-pillars" aria-hidden="true">
-            <span style="left:25%"></span>
-            <span style="left:50%"></span>
-            <span style="left:75%"></span>
-            <span style="left:95%"></span>
-            <span style="left:calc(100% - 1px)"></span>
-          </div>
+
           <div class="stage-center">
-            <div id="remainingReadout" class="time-super mono">10:00</div>
             <div class="stage-sub">Presence</div>
+            <div class="stage-presence" id="presenceReadout">Beginning</div>
             <div id="stageEvent" class="stage-event hidden"></div>
           </div>
+
           <div class="stage-meta">
             <div id="metaEventPill" class="meta-pill event-pill hidden">
               <div class="tiny">Event</div>
-              <div id="metaEvent" class="big">—</div>
+              <div id="metaEvent" class="big">UNSET</div>
             </div>
             <div class="meta-pill">
-              <div class="tiny">Instrument State</div>
+              <div class="tiny">Field Reveal</div>
               <div class="big mono" id="metaProgress">0.0%</div>
             </div>
             <div class="meta-pill compact">
@@ -897,11 +961,11 @@
 
         <div class="panel card">
           <div class="zone-bar tiny">
-            <div class="z-blue">Blue</div>
-            <div class="z-lav">Lav</div>
-            <div class="z-gold">Gold</div>
-            <div class="z-amber">Amber</div>
-            <div class="z-red">Red</div>
+            <div class="z-blue">25</div>
+            <div class="z-lav">50</div>
+            <div class="z-gold">75</div>
+            <div class="z-amber">95</div>
+            <div class="z-red">100</div>
           </div>
           <div class="command" style="padding:12px 0 0; margin:0;">
             <div class="btn-row">
@@ -934,8 +998,8 @@
             <div><strong>Held</strong><span>Window was honored.</span></div>
             <div class="tiny">01</div>
           </button>
-          <button class="resolve-btn" data-outcome="missed">
-            <div><strong>Missed</strong><span>Window slipped or broke.</span></div>
+          <button class="resolve-btn" data-outcome="expired">
+            <div><strong>Expired</strong><span>Window closed under its own boundary.</span></div>
             <div class="tiny">02</div>
           </button>
           <button class="resolve-btn" data-outcome="acknowledged">
@@ -960,25 +1024,33 @@
 </div>
 
 <div id="watchScreen" class="watch-screen" aria-hidden="true">
-  <div class="watch-face">
-    <div class="reveal-field" id="watchRevealField" aria-hidden="true"></div>
-    <div class="signal-pillars" aria-hidden="true">
-      <span style="left:25%"></span>
-      <span style="left:50%"></span>
-      <span style="left:75%"></span>
-      <span style="left:95%"></span>
-      <span style="left:calc(100% - 1px)"></span>
+  <div class="watch-reveal">
+    <div class="watch-ghost-field"></div>
+    <div class="watch-reveal-field" id="watchRevealField"></div>
+
+    <div class="watch-pillar-layer" aria-hidden="true">
+      <div class="watch-pillar p25"></div>
+      <div class="watch-pillar p50"></div>
+      <div class="watch-pillar p75"></div>
+      <div class="watch-pillar p95"></div>
+      <div class="watch-pillar p100"></div>
     </div>
+
+    <div class="watch-hud">
+      <div>
+        <div class="watch-label">Watch Mode</div>
+        <div id="watchEvent" class="watch-event hidden"></div>
+      </div>
+      <div class="watch-severity" id="watchSeverity">SEV 5</div>
+    </div>
+
     <div id="watchReminderWrap" class="watch-reminder-wrap" aria-hidden="true">
       <img id="watchReminderImage" class="watch-reminder" alt="Watch reminder image" />
       <div class="watch-reminder-label">Reminder</div>
     </div>
-    <div class="watch-severity" id="watchSeverity">SEV 5</div>
-    <div id="watchZone" class="watch-zone">Blue</div>
-    <div id="watchTime" class="watch-time mono">10:00</div>
-    <div id="watchEvent" class="watch-event hidden"></div>
+
+    <div class="watch-hint">Tap anywhere to exit</div>
   </div>
-  <div class="watch-label">Tap anywhere to exit</div>
 </div>
 
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -1025,15 +1097,15 @@
     severityBtns: [...document.querySelectorAll('.severity-btn')],
     eventInput: document.getElementById('eventInput'),
     eventReadout: document.getElementById('eventReadout'),
+    eventClearBtn: document.getElementById('eventClearBtn'),
     startBtn: document.getElementById('startBtn'),
     activeSummary: document.getElementById('activeSummary'),
-    activeEventLabel: document.getElementById('activeEventLabel'),
+    activeEvent: document.getElementById('activeEvent'),
+    currentZoneChip: document.getElementById('currentZoneChip'),
+    presenceReadout: document.getElementById('presenceReadout'),
     stageEvent: document.getElementById('stageEvent'),
     metaEventPill: document.getElementById('metaEventPill'),
     metaEvent: document.getElementById('metaEvent'),
-    currentZoneChip: document.getElementById('currentZoneChip'),
-    zoneLabel: document.getElementById('zoneLabel'),
-    remainingReadout: document.getElementById('remainingReadout'),
     metaDuration: document.getElementById('metaDuration'),
     metaSeverity: document.getElementById('metaSeverity'),
     metaProgress: document.getElementById('metaProgress'),
@@ -1048,8 +1120,6 @@
     saveResolveBtn: document.getElementById('saveResolveBtn'),
     backExpiredBtn: document.getElementById('backExpiredBtn'),
     watchScreen: document.getElementById('watchScreen'),
-    watchZone: document.getElementById('watchZone'),
-    watchTime: document.getElementById('watchTime'),
     watchSeverity: document.getElementById('watchSeverity'),
     watchEvent: document.getElementById('watchEvent'),
     toast: document.getElementById('toast'),
@@ -1076,7 +1146,9 @@
     identityHudFallback: document.getElementById('identityHudFallback'),
     identityHudName: document.getElementById('identityHudName'),
     identityHudSub: document.getElementById('identityHudSub'),
-    scaleStage: document.getElementById('scaleStage')
+    scaleStage: document.getElementById('scaleStage'),
+    revealField: document.getElementById('revealField'),
+    watchRevealField: document.getElementById('watchRevealField')
   };
 
   function setScreen(name){
@@ -1104,10 +1176,6 @@
     return ZONES.find(z => progress >= z.min && progress < z.max) || ZONES[ZONES.length - 1];
   }
 
-  function getEventLabel(){
-    return (state.eventTag || '').trim();
-  }
-
   function syncDurationUI(){
     state.durationMs = state.durationMin * 60 * 1000;
     el.durationSlider.value = state.durationMin;
@@ -1119,39 +1187,6 @@
   function syncSeverityUI(){
     el.severityBtns.forEach(btn => btn.classList.toggle('selected', Number(btn.dataset.severity) === state.severity));
     applySeverityExpression();
-    syncActiveStaticUI();
-  }
-
-  function syncEventUI(){
-    const label = getEventLabel();
-    el.eventInput.value = state.eventTag;
-    if (label) {
-      el.eventReadout.textContent = label;
-      el.eventReadout.classList.remove('empty');
-      el.activeEventLabel.textContent = label;
-      el.activeEventLabel.classList.remove('hidden');
-      el.stageEvent.textContent = label;
-      el.stageEvent.classList.remove('hidden');
-      el.metaEvent.textContent = label;
-      el.metaEventPill.classList.remove('hidden');
-      el.watchEvent.textContent = label;
-      el.watchEvent.classList.remove('hidden');
-      el.expiredEvent.textContent = label;
-      el.expiredEvent.classList.remove('hidden');
-    } else {
-      el.eventReadout.textContent = 'No event tag set';
-      el.eventReadout.classList.add('empty');
-      el.activeEventLabel.textContent = '';
-      el.activeEventLabel.classList.add('hidden');
-      el.stageEvent.textContent = '';
-      el.stageEvent.classList.add('hidden');
-      el.metaEvent.textContent = '—';
-      el.metaEventPill.classList.add('hidden');
-      el.watchEvent.textContent = '';
-      el.watchEvent.classList.add('hidden');
-      el.expiredEvent.textContent = '';
-      el.expiredEvent.classList.add('hidden');
-    }
   }
 
   function syncActiveStaticUI(){
@@ -1161,39 +1196,98 @@
     el.metaSeverity.textContent = state.severity;
     el.expiredSummary.textContent = summary;
     el.watchSeverity.textContent = `SEV ${state.severity}`;
+  }
+
+  function syncEventUI(){
+    const tag = (state.eventTag || '').trim();
+    const hasTag = Boolean(tag);
+
+    el.eventInput.value = state.eventTag;
+    el.eventReadout.textContent = hasTag ? tag : 'No event tag set';
+    el.eventReadout.classList.toggle('empty', !hasTag);
+
+    el.activeEvent.textContent = tag;
+    el.stageEvent.textContent = tag;
+    el.metaEvent.textContent = tag;
+    el.watchEvent.textContent = tag;
+    el.expiredEvent.textContent = tag;
+
+    el.activeEvent.classList.toggle('hidden', !hasTag);
+    el.stageEvent.classList.toggle('hidden', !hasTag);
+    el.metaEventPill.classList.toggle('hidden', !hasTag);
+    el.watchEvent.classList.toggle('hidden', !hasTag);
+    el.expiredEvent.classList.toggle('hidden', !hasTag);
+  }
+
+  function saveEventTag(value){
+    state.eventTag = value.trimStart();
+    try {
+      localStorage.setItem('timebound_event_tag', state.eventTag);
+    } catch (err) {
+      console.warn('TIMEBOUND event tag save failed:', err);
+    }
+    syncEventUI();
+  }
+
+  function clearEventTag(){
+    state.eventTag = '';
+    try {
+      localStorage.removeItem('timebound_event_tag');
+    } catch (err) {
+      console.warn('TIMEBOUND event tag clear failed:', err);
+    }
+    syncEventUI();
+    showToast('Event Tag Cleared');
+  }
+
+  function loadEventTag(){
+    try {
+      state.eventTag = localStorage.getItem('timebound_event_tag') || '';
+    } catch (err) {
+      console.warn('TIMEBOUND event tag load failed:', err);
+    }
     syncEventUI();
   }
 
   function applySeverityExpression(){
-    const s = state.severity;
+    const map = {
+      1: { sat: .92, contrast: .96, bright: .96, floor: .50, vignette: .16, bloom: .07 },
+      2: { sat: .96, contrast: .985, bright: .985, floor: .47, vignette: .18, bloom: .09 },
+      3: { sat: 1.00, contrast: 1.00, bright: 1.00, floor: .42, vignette: .22, bloom: .12 },
+      4: { sat: 1.05, contrast: 1.04, bright: 1.02, floor: .38, vignette: .26, bloom: .15 },
+      5: { sat: 1.10, contrast: 1.08, bright: 1.03, floor: .34, vignette: .30, bloom: .18 }
+    };
+    const s = map[state.severity] || map[3];
     const root = document.documentElement.style;
-    root.setProperty('--marker-width', `${2 + s}px`);
-    root.setProperty('--marker-cap', `${14 + s * 2}px`);
-    root.setProperty('--marker-glow', `${18 + s * 8}px`);
-    root.setProperty('--stage-sat', (0.92 + s * 0.06).toFixed(2));
-    root.setProperty('--stage-contrast', (0.96 + s * 0.045).toFixed(2));
-    root.setProperty('--stage-brightness', (0.96 + s * 0.018).toFixed(2));
-    root.setProperty('--stage-floor', (0.34 + s * 0.03).toFixed(2));
-    root.setProperty('--watch-vignette', (0.12 + s * 0.03).toFixed(2));
-    root.setProperty('--watch-bloom', (0.07 + s * 0.018).toFixed(2));
+    root.setProperty('--stage-sat', s.sat);
+    root.setProperty('--stage-contrast', s.contrast);
+    root.setProperty('--stage-brightness', s.bright);
+    root.setProperty('--stage-floor', s.floor);
+    root.setProperty('--watch-vignette', s.vignette);
+    root.setProperty('--watch-bloom', s.bloom);
   }
 
-  function pulseStage(zoneName){
-    const s = state.severity;
-    const isRed = zoneName === 'RED';
-    const scale = isRed ? (1.012 + s * 0.0034) : (1.002 + s * 0.0022);
-    const bright = isRed ? (1.14 + s * 0.03) : (1.03 + s * 0.018);
-    const sat = isRed ? (1.08 + s * 0.04) : (1.01 + s * 0.018);
-
-    if (!el.scaleStage.animate) return;
+  function zonePulse(){
+    const scale = 1 + (state.severity * 0.0025);
+    const bright = 1.03 + (state.severity * 0.02);
     el.scaleStage.animate([
-      { transform: 'scale(1)', filter: `saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` },
-      { transform: `scale(${scale.toFixed(4)})`, filter: `saturate(${sat.toFixed(3)}) contrast(${(1 + s * 0.025).toFixed(3)}) brightness(${bright.toFixed(3)})` },
-      { transform: 'scale(1)', filter: `saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` }
+      { transform:'scale(1)', filter:`saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` },
+      { transform:`scale(${scale})`, filter:`saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(${bright})` },
+      { transform:'scale(1)', filter:`saturate(var(--stage-sat)) contrast(var(--stage-contrast)) brightness(var(--stage-brightness))` }
     ], {
-      duration: isRed ? 440 : 300,
+      duration: 240 + (state.severity * 30),
       easing: 'ease-out'
     });
+  }
+
+  function describePresence(progress){
+    if (progress < 0.02) return 'Beginning';
+    if (progress < 0.25) return 'Revealing';
+    if (progress < 0.50) return 'Building';
+    if (progress < 0.75) return 'Present';
+    if (progress < 0.95) return 'Closing';
+    if (progress < 1) return 'Terminal';
+    return 'Expired';
   }
 
   function updateVisuals(progress){
@@ -1201,20 +1295,18 @@
     const zone = getZone(progress);
     const percent = `${(bounded * 100).toFixed(3)}%`;
     document.documentElement.style.setProperty('--progress', percent);
-    document.documentElement.style.setProperty('--zone', zone.color);
     document.documentElement.style.setProperty('--watch-bg', zone.color === '#f7cc4b' ? '#d5aa26' : zone.color);
 
-    if (el.zoneLabel) el.zoneLabel.textContent = zone.name;
-    el.currentZoneChip.textContent = zone.name;
+    el.currentZoneChip.textContent = `${Math.round(bounded * 100)}%`;
     el.currentZoneChip.style.borderColor = `${zone.color}55`;
     el.currentZoneChip.style.boxShadow = `inset 0 0 0 1px ${zone.color}25`;
-    el.watchZone.textContent = zone.name;
+    el.currentZoneChip.style.color = '#f4f7fb';
     el.metaProgress.textContent = `${(bounded * 100).toFixed(1)}%`;
-    document.documentElement.style.setProperty('--reveal-width', `max(${percent}, 4px)`);
+    el.presenceReadout.textContent = describePresence(progress);
 
     if (state.currentZone !== zone.name) {
-      pulseStage(zone.name);
       handleZoneAudio(state.currentZone, zone.name);
+      zonePulse();
       state.currentZone = zone.name;
     }
   }
@@ -1222,13 +1314,9 @@
   function updateTimer(){
     if (!state.startTime) return;
     const elapsed = Date.now() - state.startTime;
-    const remaining = Math.max(0, state.durationMs - elapsed);
     const progress = elapsed / state.durationMs;
 
     updateVisuals(progress);
-    const timeText = formatHMS(remaining);
-    el.remainingReadout.textContent = timeText;
-    el.watchTime.textContent = timeText;
 
     if (progress >= 1) {
       stopLoop();
@@ -1287,13 +1375,11 @@
 
   function handleZoneAudio(prev, next){
     if (!state.audioCtx) return;
-    const baseVol = 0.016 + (state.severity * 0.0075);
-
+    const baseVol = 0.015 + (state.severity * 0.008);
     if (next === 'RED') {
-      for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.76, 'sine', i * 0.13);
+      for (let i = 0; i < 5; i++) ping(1050, 0.065, baseVol * 0.72, 'sine', i * 0.13);
       return;
     }
-
     if (next === 'EXPIRED') return;
     ping(780, 0.07, baseVol * 0.8, 'sine', 0);
   }
@@ -1466,20 +1552,17 @@
   function startSession(){
     prepareAudio();
     safeResumeAudio();
-    state.eventTag = el.eventInput.value.trim();
     state.startTime = Date.now();
     state.currentZone = 'BLUE';
     state.outcome = null;
     el.resolveNote.value = '';
     el.resolveOptions.forEach(btn => btn.classList.remove('active'));
-    applySeverityExpression();
     syncActiveStaticUI();
+    syncEventUI();
     renderReminderState();
     renderProfileState();
     setScreen('active');
     updateVisuals(0);
-    el.remainingReadout.textContent = formatHMS(state.durationMs);
-    el.watchTime.textContent = formatHMS(state.durationMs);
     startLoop();
   }
 
@@ -1515,7 +1598,7 @@
       timestamp: new Date().toISOString(),
       duration_min: state.durationMin,
       severity: state.severity,
-      event_tag: getEventLabel(),
+      event_tag: state.eventTag || '',
       outcome: state.outcome || 'unmarked',
       note: el.resolveNote.value.trim()
     };
@@ -1548,10 +1631,8 @@
     syncSeverityUI();
   }));
 
-  el.eventInput.addEventListener('input', () => {
-    state.eventTag = el.eventInput.value.trim();
-    syncEventUI();
-  });
+  el.eventInput.addEventListener('input', (e) => saveEventTag(e.target.value));
+  el.eventClearBtn.addEventListener('click', clearEventTag);
 
   el.startBtn.addEventListener('click', startSession);
   el.watchBtn.addEventListener('click', () => { safeResumeAudio(); enterWatchMode(); });
@@ -1591,13 +1672,12 @@
     if (document.hidden && el.watchScreen.classList.contains('active')) exitWatchMode(false);
   });
 
-  applySeverityExpression();
   syncDurationUI();
   syncSeverityUI();
   syncActiveStaticUI();
+  loadEventTag();
   loadReminderState();
   loadProfileState();
-  syncEventUI();
 })();
 </script>
 </body>
